@@ -2,12 +2,11 @@
 
 namespace EFCoreConsoleApp.Data.Entities
 {
-    public class Brand
+    public class Section
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int FoundationYear { get; set; }
 
-        public virtual ICollection<Product> Products { get; set; }
+        public List<ProductCategorySection> ProductCategorySections { get; set; }
     }
 }
