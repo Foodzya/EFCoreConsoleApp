@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EFCoreConsoleApp.Data.Entities
+namespace EcommerceStore.Data.Entities
 {
     public class Order
     {

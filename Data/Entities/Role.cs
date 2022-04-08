@@ -1,4 +1,4 @@
-﻿namespace EFCoreConsoleApp.Data.Entities
+﻿namespace EcommerceStore.Data.Entities
 {
     public class Role
     {
