@@ -9,7 +9,9 @@ namespace EcommerceStore.EntitiesConfigurations
         public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.HasKey(u => u.Id);
-
+            builder.Property(u => u.Email).IsRequired();
+            builder.Property(u => u.PhoneNumber).IsRequired();
+            builder.HasIndex(u => u.Email).IsUnique();
             builder
                 .HasOne(u => u.Role)
                 .WithOne(r => r.User)

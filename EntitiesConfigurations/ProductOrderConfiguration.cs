@@ -8,8 +8,7 @@ namespace EcommerceStore.EntitiesConfigurations
     {
         public void Configure(EntityTypeBuilder<ProductOrder> builder)
         {
-            builder
-                .HasKey(o => new { o.ProductId, o.OrderId });
+            builder.HasKey(o => o.Id);
             builder.Property(o => o.Quantity).IsRequired();
             builder.Property(o => o.Price).IsRequired();
             builder

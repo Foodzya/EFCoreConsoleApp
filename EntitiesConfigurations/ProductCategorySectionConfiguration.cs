@@ -10,12 +10,10 @@ namespace EcommerceStore.EntitiesConfigurations
         {
             builder
                 .HasKey(s => new { s.SectionId, s.ProductCategoryId });
-
             builder
                 .HasOne(p => p.ProductCategory)
                 .WithMany(s => s.ProductCategorySections)
                 .HasForeignKey(p => p.ProductCategoryId);
-
             builder
                 .HasOne(s => s.Section)
                 .WithMany(p => p.ProductCategorySections)

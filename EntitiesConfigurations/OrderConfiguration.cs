@@ -8,12 +8,12 @@ namespace EcommerceStore.EntitiesConfigurations
     {
         public void Configure(EntityTypeBuilder<Order> builder)
         {
-            builder.HasOne(o => o.User)
-                .WithMany(u => u.Orders)
-                .HasForeignKey(o => o.UserId);
             builder.HasKey(o => o.Id);
             builder.Property(o => o.ModifiedDate).IsRequired();
             builder.Property(o => o.Status).IsRequired();
+            builder.HasOne(o => o.User)
+                .WithMany(u => u.Orders)
+                .HasForeignKey(o => o.UserId);
         }
     }
 }
