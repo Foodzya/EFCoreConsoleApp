@@ -11,8 +11,11 @@ namespace EcommerceStore.EntitiesConfigurations
             builder.HasKey(p => p.Id);
             builder.HasIndex(p => p.Name).IsUnique();
             builder.Property(p => p.Name).IsRequired();
-            builder
-            .HasOne(c => c.ParentCategory);
+            builder.Property(p => p.ParentCategoryId).IsRequired(false);
+            builder.HasOne(c => c.ParentCategory)
+                .WithMany(c => c.ChildrenCategory)
+                .HasForeignKey(c => c.ParentCategoryId)
+                .IsRequired(false);
         }
     }
 }

@@ -71,11 +71,16 @@ namespace EcommerceStore.Migrations
                         .HasColumnName("foundationyear");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("name");
 
                     b.HasKey("Id")
                         .HasName("pk_brands");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_brands_name");
 
                     b.ToTable("brands", "ecommerce");
                 });
@@ -179,7 +184,7 @@ namespace EcommerceStore.Migrations
                         .HasColumnType("text")
                         .HasColumnName("name");
 
-                    b.Property<int>("ParentCategoryId")
+                    b.Property<int?>("ParentCategoryId")
                         .HasColumnType("integer")
                         .HasColumnName("parentcategoryid");
 
@@ -375,7 +380,6 @@ namespace EcommerceStore.Migrations
                         .HasDatabaseName("ix_users_email");
 
                     b.HasIndex("RoleId")
-                        .IsUnique()
                         .HasDatabaseName("ix_users_roleid");
 
                     b.ToTable("users", "ecommerce");
@@ -429,10 +433,8 @@ namespace EcommerceStore.Migrations
             modelBuilder.Entity("EcommerceStore.Data.Entities.ProductCategory", b =>
                 {
                     b.HasOne("EcommerceStore.Data.Entities.ProductCategory", "ParentCategory")
-                        .WithMany()
+                        .WithMany("ChildrenCategory")
                         .HasForeignKey("ParentCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
                         .HasConstraintName("fk_productcategories_productcategories_parentcategoryid");
 
                     b.Navigation("ParentCategory");
@@ -532,6 +534,8 @@ namespace EcommerceStore.Migrations
 
             modelBuilder.Entity("EcommerceStore.Data.Entities.ProductCategory", b =>
                 {
+                    b.Navigation("ChildrenCategory");
+
                     b.Navigation("ProductCategorySections");
 
                     b.Navigation("Products");

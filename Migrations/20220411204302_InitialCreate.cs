@@ -20,7 +20,7 @@ namespace EcommerceStore.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(type: "text", nullable: true),
+                    name = table.Column<string>(type: "text", nullable: false),
                     foundationyear = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -36,7 +36,7 @@ namespace EcommerceStore.Migrations
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "text", nullable: false),
-                    parentcategoryid = table.Column<int>(type: "integer", nullable: false)
+                    parentcategoryid = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -46,8 +46,7 @@ namespace EcommerceStore.Migrations
                         column: x => x.parentcategoryid,
                         principalSchema: "ecommerce",
                         principalTable: "productcategories",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -280,6 +279,13 @@ namespace EcommerceStore.Migrations
                 column: "userid");
 
             migrationBuilder.CreateIndex(
+                name: "ix_brands_name",
+                schema: "ecommerce",
+                table: "brands",
+                column: "name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "ix_orders_userid",
                 schema: "ecommerce",
                 table: "orders",
@@ -372,8 +378,7 @@ namespace EcommerceStore.Migrations
                 name: "ix_users_roleid",
                 schema: "ecommerce",
                 table: "users",
-                column: "roleid",
-                unique: true);
+                column: "roleid");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

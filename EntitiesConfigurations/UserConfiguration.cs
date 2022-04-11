@@ -12,10 +12,10 @@ namespace EcommerceStore.EntitiesConfigurations
             builder.Property(u => u.Email).IsRequired();
             builder.Property(u => u.PhoneNumber).IsRequired();
             builder.HasIndex(u => u.Email).IsUnique();
+            builder.HasIndex(u => u.RoleId).IsUnique(false);
             builder
                 .HasOne(u => u.Role)
-                .WithOne(r => r.User)
-                .HasForeignKey<User>(r => r.RoleId);
+                .WithOne(r => r.User);
         }
     }
 }
