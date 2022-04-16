@@ -1,6 +1,8 @@
 ﻿using EcommerceStore.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using System;
 using System.IO;
 using System.Reflection;
 
@@ -31,8 +33,10 @@ namespace EcommerceStore.Data.Context
                 .AddJsonFile("appsettings.development.json")
                 .Build();
 
+            // optionsBuilder.UseLazyLoadingProxies();
             optionsBuilder
                 .UseNpgsql(configuration.GetConnectionString("EcommerceConnection"))
+                .LogTo(Console.WriteLine, LogLevel.Information)
                 .UseLowerCaseNamingConvention();
         }
 

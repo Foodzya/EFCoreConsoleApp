@@ -16,6 +16,6 @@ namespace EcommerceStore.Data.Entities
         public virtual Brand Brand { get; set; }
         public virtual ProductCategory ProductCategory { get; set; }
         public virtual ICollection<Review> Reviews { get; set; }
-        public List<ProductOrder> ProductOrders { get; set; }
+        public virtual List<ProductOrder> ProductOrders { get; set; }
     }
 }
