@@ -42,6 +42,8 @@ project.lock.json
 project.fragment.lock.json
 artifacts/
 
+Program.cs
+.vscode/
 *.csproj
 *_i.c
 *_p.c
@@ -67,6 +69,7 @@ artifacts/
 *.pidb
 *.svclog
 *.scc
+appsettings.development.json
 
 # Chutzpah Test files
 _Chutzpah*
