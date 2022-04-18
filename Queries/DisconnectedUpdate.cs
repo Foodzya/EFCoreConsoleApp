@@ -11,15 +11,19 @@ namespace EcommerceStore.Queries
         {
             var user = new User()
             {
-                Id = 1,
-                PhoneNumber = "917-243-9789"
+                Id = 5,
+                PhoneNumber = "917-243-9789",
+                Email = "myoldemail@gmail.com",
+                FirstName = "Alex",
+                LastName = "Bordson",
+                RoleId = 2
             };
 
             using (EcommerceContext context = new())
             {
                 context.Users.Attach(user);
 
-                context.Entry(user).Property(u => u.PhoneNumber).IsModified = true;
+                user.Email = "mynewemail@gmail.com";
 
                 context.SaveChanges();
             }
