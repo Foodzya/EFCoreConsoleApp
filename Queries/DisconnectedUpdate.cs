@@ -1,6 +1,7 @@
 ﻿using EcommerceStore.Data.Context;
 using EcommerceStore.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 
 namespace EcommerceStore.Queries
@@ -11,15 +12,19 @@ namespace EcommerceStore.Queries
         {
             var user = new User()
             {
-                Id = 1,
-                PhoneNumber = "917-243-9789"
+                Id = 3,
+                FirstName = "Jason",
+                LastName = "Chaplin",
+                Email = "chaplin.newemail4@armyspy.com",
+                PhoneNumber = "949-733-7814",
+                RoleId = 2
             };
 
             using (EcommerceContext context = new())
             {
                 context.Users.Attach(user);
 
-                context.Entry(user).Property(u => u.PhoneNumber).IsModified = true;
+                user.Email = "jasonchaplin@armyspy.com";
 
                 context.SaveChanges();
             }
@@ -36,11 +41,17 @@ namespace EcommerceStore.Queries
 
             using (EcommerceContext anotherContext = new())
             {
-                user.Email = "mynewemail@gmail.com";
+                Console.WriteLine(anotherContext.ChangeTracker.DebugView.LongView);
+
+                user.Email = "mynewemailchaplin@gmail.com";
 
                 anotherContext.Entry(user).State = EntityState.Modified;
 
+                Console.WriteLine(anotherContext.ChangeTracker.DebugView.LongView);
+
                 anotherContext.SaveChanges();
+
+                Console.WriteLine(anotherContext.ChangeTracker.DebugView.LongView);
             }
         }
     }
