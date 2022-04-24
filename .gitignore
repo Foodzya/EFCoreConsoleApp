@@ -42,7 +42,7 @@ project.lock.json
 project.fragment.lock.json
 artifacts/
 
-Program.cs
+Queries/
 .vscode/
 *.csproj
 *_i.c
