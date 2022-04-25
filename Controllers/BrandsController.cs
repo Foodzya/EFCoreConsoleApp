@@ -2,7 +2,6 @@
 using EcommerceStore.Controllers.InputModels;
 using EcommerceStore.Controllers.ViewModels;
 using EcommerceStore.Data.Context;
-using EcommerceStore.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -34,14 +33,14 @@ namespace EcommerceStore.Controllers
 
                 return Ok(brandView);
             }
-            else
-                return NotFound();
+
+            return NotFound();
         }
 
         [HttpGet]
         public ActionResult<List<BrandViewModel>> GetAll()
         {
-            List<BrandViewModel> viewBrands = new List<BrandViewModel>();
+            var viewBrands = new List<BrandViewModel>();
 
             var brands = _context.Brands
                 .Include(b => b.Products)
@@ -60,7 +59,6 @@ namespace EcommerceStore.Controllers
             }
 
             return NotFound();
-
         }
 
         [HttpDelete("{brandId}")]
@@ -80,31 +78,32 @@ namespace EcommerceStore.Controllers
         }
 
         [HttpPost]
-        public ActionResult Add([FromBody] BrandInputModel inputModel)
+        public ActionResult Add([FromBody] BrandInputModel brandInputModel)
         {
-            if (inputModel != null)
+            if (brandInputModel != null)
             {
-                var brand = inputModel.MapToBrand();
+                var brand = brandInputModel.MapToBrand();
 
                 _context.Brands.Add(brand);
-
                 _context.SaveChanges();
 
                 return Ok();
-            }            
+            }
 
             return NotFound();
         }
 
         [HttpPut("{brandId}")]
-        public ActionResult Modify([FromRoute] int brandId, [FromBody] Brand newBrand)
+        public ActionResult Modify([FromRoute] int brandId, [FromBody] BrandInputModel brandInputModel)
         {
             var brand = _context.Brands.FirstOrDefault(b => b.Id == brandId);
 
+            var updatedBrand = brandInputModel.MapToBrand();
+
             if (brand != null)
             {
-                brand.Name = newBrand.Name;
-                brand.FoundationYear = newBrand.FoundationYear;
+                brand.Name = updatedBrand.Name;
+                brand.FoundationYear = updatedBrand.FoundationYear;
 
                 _context.SaveChanges();
 

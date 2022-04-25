@@ -1,6 +1,4 @@
-﻿using EcommerceStore.Data.Entities;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace EcommerceStore.Controllers.InputModels
