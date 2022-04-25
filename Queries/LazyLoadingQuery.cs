@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace EcommerceStore.Queries
 {
-    // Need to use UseLazyLoadingProxies in OnConfiguring method
+    // Need to use UseLazyLoadingProxies method in OnConfiguring method
     // in EcommerceContext to launch lazy loading queries.
     public class LazyLoadingQuery
     {

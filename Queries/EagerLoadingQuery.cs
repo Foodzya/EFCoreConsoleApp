@@ -1,4 +1,5 @@
 ﻿using EcommerceStore.Data.Context;
+using EcommerceStore.Queries.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -16,11 +17,16 @@ namespace EcommerceStore.Queries
                 var products = context.Products
                     .Include(product => product.Brand)
                     .Where(prod => prod.Brand.Name == brandName)
-                    .Select(p => new { p.Name, p.Price, p.Quantity });
+                    .Select(p => new ProductModel
+                    {
+                        Name = p.Name,
+                        Price = p.Price,
+                        Quantity = p.Quantity
+                    });
 
                 foreach (var product in products)
                 {
-                    Console.WriteLine(product.Name);
+                    Console.WriteLine($"{product.Name} + {product.Price} + {product.Quantity}");
                 }
             }
         }
@@ -33,10 +39,10 @@ namespace EcommerceStore.Queries
                     .Include(p => p.Brand)
                     .GroupBy(p => new { p.Brand.Name, p.Brand.Id })
                     .OrderByDescending(g => g.Count())
-                    .Select(g => new
+                    .Select(g => new BrandModel
                     {
-                        BrandName = g.Key.Name,
-                        BrandCount = g.Count()
+                        Name = g.Key.Name,
+                        ProductCount = g.Count()
                     });
             }
         }
@@ -49,16 +55,39 @@ namespace EcommerceStore.Queries
             using (EcommerceContext context = new EcommerceContext())
             {
                 var products = context.Products
-                        .Include(p => p.ProductCategory)
-                            .ThenInclude(pc => pc.ProductCategorySections
-                                    .Where(pcs => pcs.Section.Name == sectionName))
-                                .ThenInclude(pcs => pcs.Section)
-                        .Where(p => p.ProductCategory.ProductCategorySections.Any(pcs => pcs.Section.Name == sectionName && pcs.ProductCategory.Name == productCategoryName))
-                        .Select(p => new { ProductName = p.Name, ProductQuantity = p.Quantity });
+                            .Include(p => p.ProductCategory)
+                                .ThenInclude(pc => pc.ProductCategorySections)
+                                    .ThenInclude(pcs => pcs.Section)
+                            .Where(p => p.ProductCategory.ProductCategorySections.Any(pcs => pcs.Section.Name == sectionName))
+                            .Where(p => p.ProductCategory.Name == productCategoryName)
+                            .Select(p => new ProductModel
+                            {
+                                Name = p.Name,
+                                Quantity = p.Quantity,
+                                Description = p.Description,
+                                Price = p.Price,
+                                SectionName = p.ProductCategory.ProductCategorySections
+                                    .FirstOrDefault(pcs => pcs.ProductCategoryId == p.ProductCategoryId).Section.Name
+                            });
+
+                var productsWithoutInclude = context.Products
+                            .Where(p => p.ProductCategory.ProductCategorySections.Any(pcs => pcs.Section.Name == sectionName))
+                            .Where(p => p.ProductCategory.Name == productCategoryName)
+                            .Select(p => new ProductModel
+                            {
+                                Name = p.Name,
+                                Quantity = p.Quantity,
+                                Description = p.Description,
+                                Price = p.Price,
+                                SectionName = p.ProductCategory.ProductCategorySections
+                                    .FirstOrDefault(pcs => pcs.ProductCategoryId == p.ProductCategoryId).Section.Name
+                            });
 
                 foreach (var product in products)
                 {
-                    Console.WriteLine($"{product.ProductName} {product.ProductQuantity}");
+                    Console.WriteLine($"Product is {product.Name};\n" +
+                        $"Quantity is {product.Quantity}\n" +
+                        $"Section is {product.SectionName}\n");
                 }
             }
 
@@ -86,11 +115,10 @@ namespace EcommerceStore.Queries
                 string status = "Completed";
 
                 var orders = context.Orders
-                    .Where(o => o.ProductOrders.Any(p => p.Product.Name == productName))
-                    .Include(o => o.ProductOrders
-                            .Where(p => p.Product.Name == productName))
+                    .Include(o => o.ProductOrders)
                         .ThenInclude(p => p.Product)
                     .Where(o => o.Status == status)
+                    .Where(o => o.ProductOrders.Any(p => p.Product.Name == productName))
                     .OrderByDescending(o => o.ModifiedDate);
 
                 foreach (var order in orders)
@@ -105,14 +133,22 @@ namespace EcommerceStore.Queries
             using (EcommerceContext context = new())
             {
                 var reviews = context.Reviews
-                    .Where(r => r.Product.Name == "Adidas Ozweego")
                     .Include(r => r.Product)
                     .Include(r => r.User)
-                    .Select(r => new { Rating = r.Rating, Comment = r.Comment, UserName = $"{r.User.FirstName} {r.User.LastName}", UserEmail = r.User.Email });
+                    .Where(r => r.Product.Name == "Adidas Superstar")
+                    .Select(r => new ReviewModel 
+                    { 
+                        Rating = r.Rating, 
+                        Comment = r.Comment, 
+                        UserName = $"{r.User.FirstName} {r.User.LastName}", 
+                        UserEmail = r.User.Email,
+                        ProductName = r.Product.Name
+                    });
 
                 foreach (var review in reviews)
                 {
-                    Console.WriteLine($"{review.UserName}, {review.UserEmail}: {review.Rating}, {review.Comment}");
+                    Console.WriteLine($"{review.UserName}, {review.UserEmail}:" +
+                        $"\n Product \"{review.ProductName}\": {review.Rating}, {review.Comment}");
                 }
             }
         }

@@ -1,6 +1,7 @@
 ﻿using EcommerceStore.Data.Context;
 using EcommerceStore.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 
 namespace EcommerceStore.Queries
@@ -11,11 +12,19 @@ namespace EcommerceStore.Queries
         {
             var user = new User()
             {
+<<<<<<< HEAD
                 Id = 5,
                 PhoneNumber = "917-243-9789",
                 Email = "myoldemail@gmail.com",
                 FirstName = "Alex",
                 LastName = "Bordson",
+=======
+                Id = 3,
+                FirstName = "Jason",
+                LastName = "Chaplin",
+                Email = "chaplin.newemail4@armyspy.com",
+                PhoneNumber = "949-733-7814",
+>>>>>>> 0c7a5b8bbdd0eeff4e60568aac8c00d2b622aa12
                 RoleId = 2
             };
 
@@ -23,7 +32,11 @@ namespace EcommerceStore.Queries
             {
                 context.Users.Attach(user);
 
+<<<<<<< HEAD
                 user.Email = "mynewemail@gmail.com";
+=======
+                user.Email = "jasonchaplin@armyspy.com";
+>>>>>>> 0c7a5b8bbdd0eeff4e60568aac8c00d2b622aa12
 
                 context.SaveChanges();
             }
@@ -40,11 +53,17 @@ namespace EcommerceStore.Queries
 
             using (EcommerceContext anotherContext = new())
             {
-                user.Email = "mynewemail@gmail.com";
+                Console.WriteLine(anotherContext.ChangeTracker.DebugView.LongView);
+
+                user.Email = "mynewemailchaplin@gmail.com";
 
                 anotherContext.Entry(user).State = EntityState.Modified;
 
+                Console.WriteLine(anotherContext.ChangeTracker.DebugView.LongView);
+
                 anotherContext.SaveChanges();
+
+                Console.WriteLine(anotherContext.ChangeTracker.DebugView.LongView);
             }
         }
     }
