@@ -11,11 +11,10 @@ namespace EcommerceStore.Data.Context
         public EcommerceContext(DbContextOptions<EcommerceContext> options)
             : base(options)
         {
+
         }
 
-        public EcommerceContext()
-        {
-        }
+        public EcommerceContext() { }
 
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Brand> Brands { get; set; }

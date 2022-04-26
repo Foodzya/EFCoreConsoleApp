@@ -19,11 +19,7 @@ namespace EcommerceStore
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<EcommerceContext>(opt => opt.UseNpgsql("name=ConnectionStrings:EcommerceConnection"));
-
-            services.AddControllersWithViews()
-                .AddNewtonsoftJson(options =>
-                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+            services.AddDbContext<EcommerceContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("EcommerceConnection")));
 
             services.AddControllers();
         }

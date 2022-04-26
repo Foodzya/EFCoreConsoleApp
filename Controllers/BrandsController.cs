@@ -1,11 +1,12 @@
-﻿using EcommerceStore.Controllers.ExtensionMappers;
-using EcommerceStore.Controllers.InputModels;
+﻿using EcommerceStore.Controllers.InputModels;
 using EcommerceStore.Controllers.ViewModels;
 using EcommerceStore.Data.Context;
+using EcommerceStore.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace EcommerceStore.Controllers
 {
@@ -21,96 +22,102 @@ namespace EcommerceStore.Controllers
         }
 
         [HttpGet("{brandId}")]
-        public ActionResult<BrandViewModel> GetById([FromRoute] int brandId)
+        public async Task<ActionResult<BrandViewModel>> GetByIdAsync([FromRoute] int brandId)
         {
-            var brand = _context.Brands
-                .Include(b => b.Products)
-                .FirstOrDefault(b => b.Id == brandId);
+            var brandViewModel = await _context.Brands
+                .Where(b => b.Id == brandId)
+                .Select(b => new BrandViewModel
+                {
+                    Name = b.Name,
+                    FoundationYear = b.FoundationYear,
+                    ProductsCount = b.Products.Count()
+                })
+                .FirstAsync();
 
-            if (brand != null)
+            if (brandViewModel == null)
             {
-                var brandView = brand.MapToBrandView();
-
-                return Ok(brandView);
+                return NotFound();
             }
 
-            return NotFound();
+            return Ok(brandViewModel);
         }
 
         [HttpGet]
-        public ActionResult<List<BrandViewModel>> GetAll()
+        public async Task<ActionResult<List<BrandViewModel>>> GetAllAsync()
         {
-            var viewBrands = new List<BrandViewModel>();
+            var viewBrands = await _context.Brands
+                .Select(b => new BrandViewModel
+                {
+                    Name = b.Name,
+                    FoundationYear = b.FoundationYear,
+                    ProductsCount = b.Products
+                                    .Where(p => p.BrandId == b.Id)
+                                    .Count()
+                })
+                .ToListAsync();
 
-            var brands = _context.Brands
-                .Include(b => b.Products)
-                .ToList();
-
-            foreach (var b in brands)
+            if (viewBrands == null)
             {
-                var viewBrand = b.MapToBrandView();
-
-                viewBrands.Add(viewBrand);
+                return NotFound();
             }
 
-            if (viewBrands != null)
-            {
-                return Ok(viewBrands);
-            }
-
-            return NotFound();
+            return Ok(viewBrands);
         }
 
         [HttpDelete("{brandId}")]
-        public ActionResult DeleteById([FromRoute] int brandId)
+        public async Task<ActionResult> DeleteByIdAsync([FromRoute] int brandId)
         {
-            var brand = _context.Brands.FirstOrDefault(b => b.Id == brandId);
+            var brand = await _context.Brands.FirstOrDefaultAsync(b => b.Id == brandId);
 
-            if (brand != null)
+            if (brand == null || brand.IsDeleted)
             {
-                _context.Brands.Remove(brand);
-                _context.SaveChanges();
-
-                return Ok();
+                return NotFound();
             }
 
-            return NotFound();
+            brand.IsDeleted = true;
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+
         }
 
         [HttpPost]
-        public ActionResult Add([FromBody] BrandInputModel brandInputModel)
+        public async Task<ActionResult> AddAsync([FromBody] BrandInputModel brandInputModel)
         {
-            if (brandInputModel != null)
+            if (!ModelState.IsValid)
             {
-                var brand = brandInputModel.MapToBrand();
-
-                _context.Brands.Add(brand);
-                _context.SaveChanges();
-
-                return Ok();
+                return NotFound();
             }
 
-            return NotFound();
+            var brand = new Brand
+            {
+                Name = brandInputModel.Name,
+                FoundationYear = brandInputModel.FoundationYear
+            };
+
+            await _context.Brands.AddAsync(brand);
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
 
         [HttpPut("{brandId}")]
-        public ActionResult Modify([FromRoute] int brandId, [FromBody] BrandInputModel brandInputModel)
+        public async Task<ActionResult> ModifyAsync([FromRoute] int brandId, [FromBody] BrandInputModel brandInputModel)
         {
-            var brand = _context.Brands.FirstOrDefault(b => b.Id == brandId);
-
-            var updatedBrand = brandInputModel.MapToBrand();
-
-            if (brand != null)
+            if (!ModelState.IsValid)
             {
-                brand.Name = updatedBrand.Name;
-                brand.FoundationYear = updatedBrand.FoundationYear;
-
-                _context.SaveChanges();
-
-                return Ok();
+                return NotFound();
             }
 
-            return NotFound();
+            var brand = await _context.Brands.FirstOrDefaultAsync(b => b.Id == brandId);
+
+            brand.Name = brandInputModel.Name;
+            brand.FoundationYear = brandInputModel.FoundationYear;
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
     }
 }

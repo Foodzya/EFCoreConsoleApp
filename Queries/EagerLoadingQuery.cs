@@ -98,7 +98,7 @@ namespace EcommerceStore.Queries
                                 join pc in context.ProductCategories on pcs.ProductCategoryId equals pc.Id
                                 join p in context.Products on pc.Id equals p.ProductCategoryId
                                 where s.Name == sectionName && pc.Name == productCategoryName
-                                select new 
+                                select new
                                 {
                                     ProductName = p.Name,
                                     ProductQuantity = p.Quantity,
@@ -136,11 +136,11 @@ namespace EcommerceStore.Queries
                     .Include(r => r.Product)
                     .Include(r => r.User)
                     .Where(r => r.Product.Name == "Adidas Superstar")
-                    .Select(r => new ReviewModel 
-                    { 
-                        Rating = r.Rating, 
-                        Comment = r.Comment, 
-                        UserName = $"{r.User.FirstName} {r.User.LastName}", 
+                    .Select(r => new ReviewModel
+                    {
+                        Rating = r.Rating,
+                        Comment = r.Comment,
+                        UserName = $"{r.User.FirstName} {r.User.LastName}",
                         UserEmail = r.User.Email,
                         ProductName = r.Product.Name
                     });
