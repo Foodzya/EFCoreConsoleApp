@@ -11,6 +11,6 @@ namespace EcommerceStore.Data.Entities
         public int UserId { get; set; }
 
         public virtual User User { get; set; }
-        public List<ProductOrder> ProductOrders { get; set; }
+        public virtual List<ProductOrder> ProductOrders { get; set; }
     }
 }

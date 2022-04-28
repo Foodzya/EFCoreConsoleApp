@@ -1,20 +1,19 @@
-﻿using EcommerceStore.Data.Context;
-using EcommerceStore.Data.Entities;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
+﻿using EcommerceStore.Queries;
 
-using (EcommerceContext context = new EcommerceContext())
-{
-    var result = context.Products
-        .Include(
-            product => product.Brand.Id == product.BrandId)
-        .ToList();
+/*EagerLoadingQuery eagerLoading = new EagerLoadingQuery();
+eagerLoading.CompletedOrdersWithProduct();
+eagerLoading.BrandsWithProductsByDesc();
+eagerLoading.ReviewsForProduct();
+eagerLoading.ProductsByBrandName();
+eagerLoading.ProductsBySectionAndCategory();
 
-    foreach (var item in result)
-    {
-        Console.WriteLine(item.Name);
-    }
 
-    Console.ReadLine();
-}
+LazyLoadingQuery lazyLoading = new LazyLoadingQuery();
+lazyLoading.CompletedOrdersWithProduct();
+lazyLoading.BrandsWithProductsByDesc();
+lazyLoading.ReviewsForProduct();
+lazyLoading.ProductsByBrandName();
+lazyLoading.ProductsBySectionAndCategory();*/
+
+EagerLoadingQuery eagerLoading = new EagerLoadingQuery();
+eagerLoading.ReviewsForProduct();

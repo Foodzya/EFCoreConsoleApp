@@ -11,6 +11,6 @@ namespace EcommerceStore.Data.Entities
         public virtual ProductCategory ParentCategory { get; set; }
         public virtual ICollection<Product> Products { get; set; }
         public virtual ICollection<ProductCategory> ChildrenCategory { get; set; } 
-        public List<ProductCategorySection> ProductCategorySections { get; set; }
+        public virtual List<ProductCategorySection> ProductCategorySections { get; set; }
     }
 }
