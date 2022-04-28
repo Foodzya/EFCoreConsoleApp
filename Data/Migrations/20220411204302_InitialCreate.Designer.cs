@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EcommerceStore.Migrations
+namespace EcommerceStore.Data.Migrations
 {
     [DbContext(typeof(EcommerceContext))]
     [Migration("20220411204302_InitialCreate")]

@@ -12,11 +12,11 @@ namespace EcommerceStore.Queries
         {
             var user = new User()
             {
-                Id = 3,
-                FirstName = "Jason",
-                LastName = "Chaplin",
-                Email = "chaplin.newemail4@armyspy.com",
-                PhoneNumber = "949-733-7814",
+                Id = 5,
+                PhoneNumber = "917-243-9789",
+                Email = "myoldemail@gmail.com",
+                FirstName = "Alex",
+                LastName = "Bordson",
                 RoleId = 2
             };
 
@@ -24,7 +24,7 @@ namespace EcommerceStore.Queries
             {
                 context.Users.Attach(user);
 
-                user.Email = "jasonchaplin@armyspy.com";
+                user.Email = "mynewemail@gmail.com";
 
                 context.SaveChanges();
             }

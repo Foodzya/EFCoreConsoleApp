@@ -1,19 +1,15 @@
-﻿using EcommerceStore.Queries;
+﻿using EcommerceStore;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
 
-/*EagerLoadingQuery eagerLoading = new EagerLoadingQuery();
-eagerLoading.CompletedOrdersWithProduct();
-eagerLoading.BrandsWithProductsByDesc();
-eagerLoading.ReviewsForProduct();
-eagerLoading.ProductsByBrandName();
-eagerLoading.ProductsBySectionAndCategory();
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        CreateWebHostBuilder(args).Build().Run();
+    }
 
-
-LazyLoadingQuery lazyLoading = new LazyLoadingQuery();
-lazyLoading.CompletedOrdersWithProduct();
-lazyLoading.BrandsWithProductsByDesc();
-lazyLoading.ReviewsForProduct();
-lazyLoading.ProductsByBrandName();
-lazyLoading.ProductsBySectionAndCategory();*/
-
-EagerLoadingQuery eagerLoading = new EagerLoadingQuery();
-eagerLoading.ReviewsForProduct();
+    public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+        WebHost.CreateDefaultBuilder(args)
+            .UseStartup<Startup>();
+}

@@ -1,18 +1,20 @@
 ﻿using EcommerceStore.Data.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
-using System.IO;
 using System.Reflection;
 
 namespace EcommerceStore.Data.Context
 {
     public class EcommerceContext : DbContext
     {
-        public EcommerceContext()
+        public EcommerceContext(DbContextOptions<EcommerceContext> options)
+            : base(options)
         {
+
         }
+
+        public EcommerceContext() { }
 
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Brand> Brands { get; set; }
@@ -28,14 +30,13 @@ namespace EcommerceStore.Data.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.development.json")
-                .Build();
+            //var configuration = new ConfigurationBuilder()
+            //    .SetBasePath(Directory.GetCurrentDirectory())
+            //    .AddJsonFile("appsettings.development.json")
+            //    .Build();
 
             // optionsBuilder.UseLazyLoadingProxies();
             optionsBuilder
-                .UseNpgsql(configuration.GetConnectionString("EcommerceConnection"))
                 .LogTo(Console.WriteLine, LogLevel.Information)
                 .UseLowerCaseNamingConvention();
         }

@@ -49,11 +49,11 @@ namespace EcommerceStore.Queries
 
         public void ProductsBySectionAndCategory()
         {
+            string productCategoryName = "Sneakers";
+            string sectionName = "Man";
+
             using (EcommerceContext context = new EcommerceContext())
             {
-                string productCategoryName = "Sneakers";
-                string sectionName = "Man";
-
                 var products = context.Products
                             .Include(p => p.ProductCategory)
                                 .ThenInclude(pc => pc.ProductCategorySections)
@@ -90,6 +90,22 @@ namespace EcommerceStore.Queries
                         $"Section is {product.SectionName}\n");
                 }
             }
+
+            using (EcommerceContext context = new EcommerceContext())
+            {
+                var products = (from s in context.Sections
+                                join pcs in context.ProductCategorySections on s.Id equals pcs.SectionId
+                                join pc in context.ProductCategories on pcs.ProductCategoryId equals pc.Id
+                                join p in context.Products on pc.Id equals p.ProductCategoryId
+                                where s.Name == sectionName && pc.Name == productCategoryName
+                                select new
+                                {
+                                    ProductName = p.Name,
+                                    ProductQuantity = p.Quantity,
+                                    ProductCategoryName = pc.Name,
+                                    SectionName = s.Name
+                                }).ToList();
+            }
         }
         public void CompletedOrdersWithProduct()
         {
@@ -120,11 +136,11 @@ namespace EcommerceStore.Queries
                     .Include(r => r.Product)
                     .Include(r => r.User)
                     .Where(r => r.Product.Name == "Adidas Superstar")
-                    .Select(r => new ReviewModel 
-                    { 
-                        Rating = r.Rating, 
-                        Comment = r.Comment, 
-                        UserName = $"{r.User.FirstName} {r.User.LastName}", 
+                    .Select(r => new ReviewModel
+                    {
+                        Rating = r.Rating,
+                        Comment = r.Comment,
+                        UserName = $"{r.User.FirstName} {r.User.LastName}",
                         UserEmail = r.User.Email,
                         ProductName = r.Product.Name
                     });

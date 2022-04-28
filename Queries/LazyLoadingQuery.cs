@@ -1,4 +1,5 @@
 ﻿using EcommerceStore.Data.Context;
+using EcommerceStore.Queries.Models;
 using System;
 using System.Linq;
 
@@ -29,15 +30,15 @@ namespace EcommerceStore.Queries
                 var brandsWithProducts = context.Products
                     .GroupBy(p => new { p.Brand.Name, p.Brand.Id })
                     .OrderByDescending(g => g.Count())
-                    .Select(g => new
+                    .Select(g => new BrandModel
                     {
-                        BrandName = g.Key.Name,
-                        BrandCount = g.Count()
+                        Name = g.Key.Name,
+                        ProductCount = g.Count()
                     });
 
                 foreach (var brand in brandsWithProducts)
                 {
-                    Console.WriteLine($"{brand.BrandName} {brand.BrandCount}");
+                    Console.WriteLine($"{brand.Name} {brand.ProductCount}");
                 }
             }
         }
@@ -54,11 +55,16 @@ namespace EcommerceStore.Queries
                 var productsBySectionAndCategory = products
                     .Where(p => p.ProductCategory.Name == productCategoryName)
                     .Where(p => p.ProductCategory.ProductCategorySections.Any(pcs => pcs.Section.Name == sectionName))
-                    .Select(p => new { ProductName = p.Name, ProductQuantity = p.Quantity, ProductCategoryName = p.ProductCategory.Name });
+                    .Select(p => new ProductModel
+                    {
+                        Name = p.Name,
+                        Quantity = p.Quantity,
+                        CategoryName = p.ProductCategory.Name
+                    });
 
                 foreach (var product in productsBySectionAndCategory)
                 {
-                    Console.WriteLine($"{product.ProductName} {product.ProductQuantity} {product.ProductCategoryName}");
+                    Console.WriteLine($"{product.Name} {product.Quantity} {product.CategoryName}");
                 }
             }
         }
@@ -73,7 +79,12 @@ namespace EcommerceStore.Queries
                     .Where(o => o.Status == "Completed")
                     .Where(o => o.ProductOrders.Any(p => p.Product.Name == "Adidas Ozweego"))
                     .OrderByDescending(o => o.ModifiedDate)
-                    .Select(o => new { o.Status, o.ModifiedDate, o.UserId });
+                    .Select(o => new OrderModel
+                    {
+                        Status = o.Status,
+                        ModifiedDate = o.ModifiedDate,
+                        UserId = o.UserId
+                    });
 
                 foreach (var order in completedOrdersWithProduct)
                 {
@@ -90,7 +101,14 @@ namespace EcommerceStore.Queries
 
                 var reviewsForProduct = reviews
                     .Where(r => r.Product.Name == "Adidas Ozweego")
-                    .Select(r => new { Rating = r.Rating, Comment = r.Comment, UserName = $"{r.User.FirstName} {r.User.LastName}", UserEmail = r.User.Email, ProductName = r.Product.Name });
+                    .Select(r => new ReviewModel
+                    {
+                        Rating = r.Rating,
+                        Comment = r.Comment,
+                        UserName = $"{r.User.FirstName} {r.User.LastName}",
+                        UserEmail = r.User.Email,
+                        ProductName = r.Product.Name
+                    });
 
                 foreach (var review in reviewsForProduct)
                 {

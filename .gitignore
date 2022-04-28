@@ -42,7 +42,8 @@ project.lock.json
 project.fragment.lock.json
 artifacts/
 
-Program.cs
+Properties/
+Queries/DisconnectedUpdate.cs
 .vscode/
 *.csproj
 *_i.c
@@ -70,6 +71,7 @@ Program.cs
 *.svclog
 *.scc
 appsettings.development.json
+appsettings.json
 
 # Chutzpah Test files
 _Chutzpah*
