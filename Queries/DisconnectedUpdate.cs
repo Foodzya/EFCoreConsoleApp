@@ -1,5 +1,5 @@
-﻿using EcommerceStore.Data.Context;
-using EcommerceStore.Data.Entities;
+﻿using EcommerceStore.Core.Context;
+using EcommerceStore.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
