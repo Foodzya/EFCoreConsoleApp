@@ -32,7 +32,7 @@ namespace EcommerceStore.Controllers
                     FoundationYear = b.FoundationYear,
                     ProductsCount = b.Products.Count()
                 })
-                .FirstAsync();
+                .FirstOrDefaultAsync();
 
             if (brandViewModel == null)
             {
@@ -45,23 +45,21 @@ namespace EcommerceStore.Controllers
         [HttpGet]
         public async Task<ActionResult<List<BrandViewModel>>> GetAllAsync()
         {
-            var viewBrands = await _context.Brands
+            var brandsViewModel = await _context.Brands
                 .Select(b => new BrandViewModel
                 {
                     Name = b.Name,
                     FoundationYear = b.FoundationYear,
-                    ProductsCount = b.Products
-                                    .Where(p => p.BrandId == b.Id)
-                                    .Count()
+                    ProductsCount = b.Products.Count()
                 })
                 .ToListAsync();
 
-            if (viewBrands == null)
+            if (brandsViewModel == null)
             {
                 return NotFound();
             }
 
-            return Ok(viewBrands);
+            return Ok(brandsViewModel);
         }
 
         [HttpDelete("{brandId}")]

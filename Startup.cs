@@ -21,7 +21,11 @@ namespace EcommerceStore
         {
             services.AddDbContext<EcommerceContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("EcommerceConnection")));
 
-            services.AddControllers();
+            services.AddControllers()
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    options.SuppressModelStateInvalidFilter = true;
+                });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
