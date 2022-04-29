@@ -1,11 +1,8 @@
-﻿using EcommerceStore.Core.Entities;
-using EcommerceStore.Persistence.Infrastucture.Context;
-using EcommerceStore.WebApi.Models.InputModels;
-using EcommerceStore.WebApi.Models.ViewModels;
+﻿using EcommerceStore.Application.Interfaces.Services;
+using EcommerceStore.Infrastucture.Persistence.Models.InputModels;
+using EcommerceStore.Infrastucture.Persistence.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace EcommerceStore.WebApi.Controllers
@@ -14,25 +11,17 @@ namespace EcommerceStore.WebApi.Controllers
     [Route("api/brands")]
     public class BrandsController : ControllerBase
     {
-        private readonly EcommerceContext _context;
+        private readonly IBrandService _brandService;
 
-        public BrandsController(EcommerceContext context)
+        public BrandsController(IBrandService brandService)
         {
-            _context = context;
+            _brandService = brandService;
         }
 
         [HttpGet("{brandId}")]
         public async Task<ActionResult<BrandViewModel>> GetByIdAsync([FromRoute] int brandId)
         {
-            var brandViewModel = await _context.Brands
-                .Where(b => b.Id == brandId)
-                .Select(b => new BrandViewModel
-                {
-                    Name = b.Name,
-                    FoundationYear = b.FoundationYear,
-                    ProductsCount = b.Products.Count()
-                })
-                .FirstOrDefaultAsync();
+            BrandViewModel brandViewModel = await _brandService.GetByIdAsync(brandId);
 
             if (brandViewModel == null)
             {
@@ -45,39 +34,22 @@ namespace EcommerceStore.WebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<List<BrandViewModel>>> GetAllAsync()
         {
-            var brandsViewModel = await _context.Brands
-                .Select(b => new BrandViewModel
-                {
-                    Name = b.Name,
-                    FoundationYear = b.FoundationYear,
-                    ProductsCount = b.Products.Count()
-                })
-                .ToListAsync();
+            var brandsViewModels = await _brandService.GetAllAsync();
 
-            if (brandsViewModel == null)
+            if (brandsViewModels == null)
             {
                 return NotFound();
             }
 
-            return Ok(brandsViewModel);
+            return Ok(brandsViewModels);
         }
 
         [HttpDelete("{brandId}")]
         public async Task<ActionResult> DeleteByIdAsync([FromRoute] int brandId)
         {
-            var brand = await _context.Brands.FirstOrDefaultAsync(b => b.Id == brandId);
-
-            if (brand == null || brand.IsDeleted)
-            {
-                return NotFound();
-            }
-
-            brand.IsDeleted = true;
-
-            await _context.SaveChangesAsync();
-
+            await _brandService.RemoveByIdAsync(brandId);
+            
             return Ok();
-
         }
 
         [HttpPost]
@@ -88,14 +60,7 @@ namespace EcommerceStore.WebApi.Controllers
                 return NotFound();
             }
 
-            var brand = new Brand
-            {
-                Name = brandInputModel.Name,
-                FoundationYear = brandInputModel.FoundationYear
-            };
-
-            await _context.Brands.AddAsync(brand);
-            await _context.SaveChangesAsync();
+            await _brandService.AddAsync(brandInputModel);
 
             return Ok();
         }
@@ -108,12 +73,7 @@ namespace EcommerceStore.WebApi.Controllers
                 return NotFound();
             }
 
-            var brand = await _context.Brands.FirstOrDefaultAsync(b => b.Id == brandId);
-
-            brand.Name = brandInputModel.Name;
-            brand.FoundationYear = brandInputModel.FoundationYear;
-
-            await _context.SaveChangesAsync();
+            await _brandService.ModifyAsync(brandId, brandInputModel);
 
             return Ok();
         }

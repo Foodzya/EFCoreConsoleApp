@@ -1,4 +1,8 @@
-﻿using EcommerceStore.Persistence.Infrastucture.Context;
+﻿using EcommerceStore.Application.Interfaces.Repositories;
+using EcommerceStore.Application.Interfaces.Services;
+using EcommerceStore.Infrastucture.Persistence.Context;
+using EcommerceStore.Infrastucture.Repositories;
+using EcommerceStore.Infrastucture.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +24,10 @@ namespace EcommerceStore.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<EcommerceContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("EcommerceConnection")));
+
+            services.AddTransient<IBrandRepository, BrandRepository>();
+
+            services.AddTransient<IBrandService, BrandService>();
 
             services.AddControllers()
                 .ConfigureApiBehaviorOptions(options =>

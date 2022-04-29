@@ -1,11 +1,11 @@
-﻿using EcommerceStore.Infrastucture.Persistence.Models.InputModels;
-using EcommerceStore.Infrastucture.Persistence.Models.ViewModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using EcommerceStore.Infrastucture.Persistence.Models.InputModels;
+using EcommerceStore.Infrastucture.Persistence.Models.ViewModels;
 
-namespace EcommerceStore.Application.Interfaces.Repositories
+namespace EcommerceStore.Application.Interfaces.Services
 {
-    public interface IBrandRepository
+    public interface IBrandService
     {
         public Task<BrandViewModel> GetByIdAsync(int brandId);
         public Task<IEnumerable<BrandViewModel>> GetAllAsync();

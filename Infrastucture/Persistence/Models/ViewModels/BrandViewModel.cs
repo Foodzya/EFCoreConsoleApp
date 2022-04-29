@@ -1,4 +1,4 @@
-﻿namespace EcommerceStore.WebApi.Models.ViewModels
+﻿namespace EcommerceStore.Infrastucture.Persistence.Models.ViewModels
 {
     public class BrandViewModel
     {

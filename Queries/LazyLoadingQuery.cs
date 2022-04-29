@@ -1,4 +1,4 @@
-﻿using EcommerceStore.Persistence.Infrastucture.Context;
+﻿using EcommerceStore.Infrastucture.Persistence.Context;
 using EcommerceStore.Queries.Models;
 using System;
 using System.Linq;

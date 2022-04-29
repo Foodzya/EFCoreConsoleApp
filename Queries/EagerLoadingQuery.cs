@@ -1,4 +1,4 @@
-﻿using EcommerceStore.Core.Context;
+﻿using EcommerceStore.Infrastucture.Persistence.Context;
 using EcommerceStore.Queries.Models;
 using Microsoft.EntityFrameworkCore;
 using System;

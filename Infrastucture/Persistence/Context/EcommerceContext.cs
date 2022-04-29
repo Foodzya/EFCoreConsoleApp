@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Reflection;
 
-namespace EcommerceStore.Persistence.Infrastucture.Context
+namespace EcommerceStore.Infrastucture.Persistence.Context
 {
     public class EcommerceContext : DbContext
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace EcommerceStore.WebApi.Models.InputModels
+namespace EcommerceStore.Infrastucture.Persistence.Models.InputModels
 {
     public class BrandInputModel
     {
