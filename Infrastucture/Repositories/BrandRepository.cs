@@ -49,7 +49,7 @@ namespace EcommerceStore.Infrastucture.Repositories
         public async Task<BrandViewModel> GetByIdAsync(int brandId)
         {
             var brandViewModel = await _context.Brands
-            .Where(b => b.Id == brandId)
+            .Where(b => b.Id == brandId && b.IsDeleted == false)
             .Select(b => new BrandViewModel
             {
                 Name = b.Name,
@@ -57,9 +57,6 @@ namespace EcommerceStore.Infrastucture.Repositories
                 ProductsCount = b.Products.Count()
             })
             .FirstOrDefaultAsync();
-
-            if (brandViewModel == null)
-                throw new NullReferenceException("No brand found");
 
             return brandViewModel;
         }
