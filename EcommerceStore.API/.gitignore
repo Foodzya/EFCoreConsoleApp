@@ -42,11 +42,9 @@ project.lock.json
 project.fragment.lock.json
 artifacts/
 
-Exceptions/
 Properties/
 Queries/DisconnectedUpdate.cs
 .vscode/
-*.sln
 *.csproj
 *_i.c
 *_p.c
