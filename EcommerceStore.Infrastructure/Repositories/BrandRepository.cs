@@ -19,7 +19,7 @@ namespace EcommerceStore.Infrastucture.Repositories
             await _context.Brands.AddAsync(brand);
         }
 
-        public async Task<IEnumerable<Brand>> GetAllAsync()
+        public async Task<List<Brand>> GetAllAsync()
         {
             var brands = await _context.Brands
                 .Include(b => b.Products)
@@ -32,7 +32,7 @@ namespace EcommerceStore.Infrastucture.Repositories
         {
             var brand = await _context.Brands
             .Include(b => b.Products)
-            .Where(b => b.Id == brandId && b.IsDeleted == false)
+            .Where(b => b.Id == brandId && !b.IsDeleted)
             .FirstOrDefaultAsync();
 
             return brand;
@@ -41,15 +41,11 @@ namespace EcommerceStore.Infrastucture.Repositories
         public async Task UpdateAsync(Brand brand)
         {
             _context.Brands.Update(brand);
-
-            await _context.SaveChangesAsync();
         }
 
         public async Task RemoveAsync(Brand brand)
         {
             _context.Brands.Remove(brand);
-
-            await _context.SaveChangesAsync();
         }
 
         public async Task SaveChangesAsync()

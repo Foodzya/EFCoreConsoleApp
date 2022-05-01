@@ -1,4 +1,5 @@
-﻿using EcommerceStore.Application.Interfaces;
+﻿using EcommerceStore.Application.Exceptions;
+using EcommerceStore.Application.Interfaces;
 using EcommerceStore.Application.Models.InputModels;
 using EcommerceStore.Application.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -23,11 +24,6 @@ namespace EcommerceStore.API.Controllers
         {
             BrandViewModel brandViewModel = await _brandService.GetBrandByIdAsync(brandId);
 
-            if (brandViewModel == null)
-            {
-                return NotFound();
-            }
-
             return Ok(brandViewModel);
         }
 
@@ -35,11 +31,6 @@ namespace EcommerceStore.API.Controllers
         public async Task<ActionResult<List<BrandViewModel>>> GetAllAsync()
         {
             var brandsViewModels = await _brandService.GetAllBrandsAsync();
-
-            if (brandsViewModels == null)
-            {
-                return NotFound();
-            }
 
             return Ok(brandsViewModels);
         }
@@ -57,7 +48,7 @@ namespace EcommerceStore.API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return NotFound();
+                throw new ValidationException(ModelState);
             }
 
             await _brandService.CreateBrandAsync(brandInputModel);
@@ -70,7 +61,7 @@ namespace EcommerceStore.API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return NotFound();
+                throw new ValidationException(ModelState);
             }
 
             await _brandService.UpdateBrandAsync(brandId, brandInputModel);
