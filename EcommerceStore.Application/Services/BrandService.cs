@@ -18,23 +18,22 @@ namespace EcommerceStore.Infrastucture.Services
 
         public async Task CreateBrandAsync(BrandInputModel brandIm)
         {
-            var brand = new Brand
-            {
-                Name = brandIm.Name,
-                FoundationYear = brandIm.FoundationYear
-            };
+            var existingBrand = await _brandRepository.GetByNameAsync(brandIm.Name);
 
-            var brands = await _brandRepository.GetAllAsync();
-
-            foreach (var b in brands)
+            if (existingBrand.Name is null)
             {
-                if (b.Name == brandIm.Name)
-                    throw new ValidationException(ExceptionMessages.BrandAlreadyExists);
+                var brand = new Brand
+                {
+                    Name = brandIm.Name,
+                    FoundationYear = brandIm.FoundationYear
+                };
+
+                await _brandRepository.CreateAsync(brand);
+
+                await _brandRepository.SaveChangesAsync();
             }
 
-            await _brandRepository.CreateAsync(brand);
-
-            await _brandRepository.SaveChangesAsync();
+            throw new ValidationException(ExceptionMessages.BrandAlreadyExists);
         }
 
         public async Task<List<BrandViewModel>> GetAllBrandsAsync()
@@ -75,22 +74,21 @@ namespace EcommerceStore.Infrastucture.Services
 
         public async Task UpdateBrandAsync(int brandId, BrandInputModel brandIm)
         {
-            var brand = await _brandRepository.GetByIdAsync(brandId);
+            var existingBrand = await _brandRepository.GetByNameAsync(brandIm.Name);
 
-            var brands = await _brandRepository.GetAllAsync();
-
-            foreach (var b in brands)
+            if (existingBrand is null)
             {
-                if (b.Name == brandIm.Name)
-                    throw new ValidationException(ExceptionMessages.BrandAlreadyExists);
+                var brand = await _brandRepository.GetByIdAsync(brandId);
+
+                brand.Name = brandIm.Name;
+                brand.FoundationYear = brandIm.FoundationYear;
+
+                await _brandRepository.UpdateAsync(brand);
+
+                await _brandRepository.SaveChangesAsync();
             }
 
-            brand.Name = brandIm.Name;
-            brand.FoundationYear = brandIm.FoundationYear;
-
-            await _brandRepository.UpdateAsync(brand);
-
-            await _brandRepository.SaveChangesAsync();
+            throw new ValidationException(ExceptionMessages.BrandAlreadyExists);
         }
 
         public async Task RemoveBrandByIdAsync(int brandId)

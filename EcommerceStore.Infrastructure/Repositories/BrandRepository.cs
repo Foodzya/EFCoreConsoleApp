@@ -52,5 +52,12 @@ namespace EcommerceStore.Infrastucture.Repositories
         {
             await _context.SaveChangesAsync();
         }
+
+        public async Task<Brand> GetByNameAsync(string brandName)
+        {
+            var brand = await _context.Brands.FirstOrDefaultAsync(b => b.Name == brandName);
+
+            return brand;
+        }
     }
 }

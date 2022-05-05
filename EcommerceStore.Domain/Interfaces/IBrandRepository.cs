@@ -10,5 +10,6 @@ namespace EcommerceStore.Domain.Interfaces
         public Task RemoveAsync(Brand brand);
         public Task UpdateAsync(Brand brand);
         public Task SaveChangesAsync();
+        public Task<Brand> GetByNameAsync(string brandName);
     }
 }
