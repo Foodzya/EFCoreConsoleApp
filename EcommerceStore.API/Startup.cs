@@ -1,8 +1,8 @@
 ﻿using EcommerceStore.Application.Interfaces;
+using EcommerceStore.Application.Services;
 using EcommerceStore.Domain.Interfaces;
 using EcommerceStore.Infrastucture.Persistence;
 using EcommerceStore.Infrastucture.Repositories;
-using EcommerceStore.Infrastucture.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;

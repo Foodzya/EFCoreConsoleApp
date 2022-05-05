@@ -1,6 +1,7 @@
 ﻿using EcommerceStore.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Reflection;
 
 namespace EcommerceStore.Infrastucture.Persistence

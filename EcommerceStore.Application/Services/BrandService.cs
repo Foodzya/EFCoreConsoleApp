@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using EcommerceStore.Application.Exceptions;
 using EcommerceStore.Application.Interfaces;
 using EcommerceStore.Application.Models.InputModels;
@@ -5,7 +8,7 @@ using EcommerceStore.Application.Models.ViewModels;
 using EcommerceStore.Domain.Entities;
 using EcommerceStore.Domain.Interfaces;
 
-namespace EcommerceStore.Infrastucture.Services
+namespace EcommerceStore.Application.Services
 {
     public class BrandService : IBrandService
     {
