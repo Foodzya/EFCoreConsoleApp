@@ -26,8 +26,9 @@ namespace EcommerceStore.API
             services.AddDbContext<EcommerceContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("EcommerceConnection")));
 
             services.AddTransient<IBrandRepository, BrandRepository>();
-
             services.AddTransient<IBrandService, BrandService>();
+            services.AddTransient<IProductRepository, ProductRepository>();
+            services.AddTransient<IProductService, ProductService>();
 
             services.AddControllers()
                 .ConfigureApiBehaviorOptions(options =>

@@ -24,15 +24,27 @@ namespace EcommerceStore.Infrastucture.Repositories
         public async Task<List<Product>> GetAllAsync()
         {
             return await _context.Products
+                .Include(p => p.Brand)
+                .Include(p => p.ProductCategory)
                 .ToListAsync();
         }
 
         public async Task<Product> GetByIdAsync(int productId)
         {
-            return await _context.Products.FirstOrDefaultAsync(p => p.Id == productId);
+            return await _context.Products
+                .Include(p => p.ProductCategory)
+                .Include(p => p.Brand)
+                .FirstOrDefaultAsync(p => p.Id == productId);
         }
 
-        public async Task RemoveAsync(Product product)
+        public async Task<Product> GetByNameAsync(string productName)
+        {
+            var product = await _context.Products.FirstOrDefaultAsync(p => p.Name == productName);
+
+            return product;
+        }
+
+        public void Remove(Product product)
         {
             _context.Products.Remove(product);
         }
@@ -42,7 +54,7 @@ namespace EcommerceStore.Infrastucture.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(Product product)
+        public void Update(Product product)
         {
             _context.Products.Update(product);
         }

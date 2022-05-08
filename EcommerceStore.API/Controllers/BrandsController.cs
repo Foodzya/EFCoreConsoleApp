@@ -44,7 +44,7 @@ namespace EcommerceStore.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddAsync([FromBody] BrandInputModel brandInputModel)
+        public async Task<ActionResult> CreateAsync([FromBody] BrandInputModel brandInputModel)
         {
             if (!ModelState.IsValid)
             {
@@ -57,7 +57,7 @@ namespace EcommerceStore.API.Controllers
         }
 
         [HttpPut("{brandId}")]
-        public async Task<ActionResult> ModifyAsync([FromRoute] int brandId, [FromBody] BrandInputModel brandInputModel)
+        public async Task<ActionResult> UpdateAsync([FromRoute] int brandId, [FromBody] BrandInputModel brandInputModel)
         {
             if (!ModelState.IsValid)
             {

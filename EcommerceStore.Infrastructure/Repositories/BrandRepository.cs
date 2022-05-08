@@ -41,12 +41,12 @@ namespace EcommerceStore.Infrastucture.Repositories
             return brand;
         }
 
-        public async Task UpdateAsync(Brand brand)
+        public void Update(Brand brand)
         {
             _context.Brands.Update(brand);
         }
 
-        public async Task RemoveAsync(Brand brand)
+        public void Remove(Brand brand)
         {
             _context.Brands.Remove(brand);
         }

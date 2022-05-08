@@ -16,9 +16,14 @@ namespace EcommerceStore.Application.Exceptions
             ErrorMessages = messages;
         }
 
+        public ValidationException(string exception, int itemId)
+        {
+            ValidateException(exception, itemId);
+        }
+
         public ValidationException(string exception)
         {
-            ValidateException(exception);
+            ErrorMessages = new List<string> { exception };
         }
 
         public ValidationException(ModelStateDictionary modelState)
@@ -28,9 +33,9 @@ namespace EcommerceStore.Application.Exceptions
             FieldSpecificMessages = modelState.Keys.ToDictionary(k => k, k => modelState[k].Errors.Select(e => e.ErrorMessage).ToList());
             GeneralMessages = new List<string>();
         }
-        private void ValidateException(string message)
+        private void ValidateException(string message, int itemId)
         {
-            ErrorMessages = new List<string> { message };
+            ErrorMessages = new List<string> { string.Format(message, itemId) };
         }
     }
 }

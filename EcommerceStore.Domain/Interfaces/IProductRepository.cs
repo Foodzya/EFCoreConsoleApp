@@ -9,8 +9,9 @@ namespace EcommerceStore.Domain.Interfaces
         public Task<Product> GetByIdAsync(int productId);
         public Task<List<Product>> GetAllAsync();
         public Task CreateAsync(Product product);
-        public Task RemoveAsync(Product product);
-        public Task UpdateAsync(Product product);
+        public void Remove(Product product);
+        public void Update(Product product);
+        public Task<Product> GetByNameAsync(string productName);
         public Task SaveChangesAsync();
     }
 }

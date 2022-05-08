@@ -6,6 +6,7 @@ using EcommerceStore.Application.Models.InputModels;
 using EcommerceStore.Application.Models.ViewModels;
 using EcommerceStore.Domain.Entities;
 using EcommerceStore.Domain.Interfaces;
+using EcommerceStore.Application.Exceptions;
 
 namespace EcommerceStore.Application.Services
 {
@@ -18,15 +19,24 @@ namespace EcommerceStore.Application.Services
             _productRepository = productRepository;
         }
 
-        public async Task CreateProductAsync(ProductInputModel productInputModel)
+        public async Task CreateProductAsync(ProductInputModel productIm)
         {
+            var existingProduct = await _productRepository.GetByNameAsync(productIm.Name);
+
+            if (existingProduct != null)
+            {
+                throw new ValidationException(ExceptionMessages.ProductAlreadyExists, existingProduct.Id);
+            }
+
             var product = new Product
             {
-                Name = productInputModel.Name,
-                Price = productInputModel.Price,
-                Quantity = productInputModel.Quantity,
-                Description = productInputModel.Description,
-                Image = productInputModel.Image
+                Name = productIm.Name,
+                Price = productIm.Price,
+                Quantity = productIm.Quantity,
+                Description = productIm.Description,
+                Image = productIm.Image,
+                BrandId = productIm.BrandId,
+                ProductCategoryId = productIm.ProductCategoryId
             };
 
             await _productRepository.CreateAsync(product);
@@ -45,26 +55,70 @@ namespace EcommerceStore.Application.Services
                     Price = p.Price,
                     Quantity = p.Quantity,
                     Description = p.Description,
-                    Image = p.Image
+                    Image = p.Image,
+                    BrandName = p.Brand.Name,
+                    ProductCategoryName = p.ProductCategory.Name
                 })
                 .ToList();
 
             return productsViewModel;
         }
 
-        public Task<ProductViewModel> GetProductByIdAsync(int productId)
+        public async Task<ProductViewModel> GetProductByIdAsync(int productId)
         {
-            throw new System.NotImplementedException();
+            var product = await _productRepository.GetByIdAsync(productId);
+
+            if (product is null)
+                throw new ValidationException(ExceptionMessages.ProductNotFound, productId);
+
+            var productViewModel = new ProductViewModel
+            {
+                Name = product.Name,
+                Description = product.Description,
+                Image = product.Image,
+                Price = product.Price,
+                Quantity = product.Quantity,
+                BrandName = product.Brand.Name,
+                ProductCategoryName = product.ProductCategory.Name
+            };
+
+            return productViewModel;
         }
 
-        public Task RemoveProductAsync(int productId)
+        public async Task RemoveProductAsync(int productId)
         {
-            throw new System.NotImplementedException();
+            var product = await _productRepository.GetByIdAsync(productId);
+
+            if (product is null)
+                throw new ValidationException(ExceptionMessages.ProductNotFound, productId);
+
+            _productRepository.Remove(product);
+
+            await _productRepository.SaveChangesAsync();
         }
 
-        public Task UpdateProductAsync(int productId, ProductInputModel productInputModel)
+        public async Task UpdateProductAsync(int productId, ProductInputModel productIm)
         {
-            throw new System.NotImplementedException();
+            var existingProduct = await _productRepository.GetByNameAsync(productIm.Name);
+
+            if (existingProduct != null && existingProduct.Id != productId)
+            {
+                throw new ValidationException(ExceptionMessages.ProductAlreadyExists);
+            }
+
+            var product = await _productRepository.GetByIdAsync(productId);
+
+            product.Name = productIm.Name;
+            product.Description = productIm.Description;
+            product.Price = productIm.Price;
+            product.Quantity = productIm.Quantity;
+            product.Image = productIm.Image;
+            product.BrandId = productIm.BrandId;
+            product.ProductCategoryId = productIm.ProductCategoryId;
+
+            _productRepository.Update(product);
+
+            await _productRepository.SaveChangesAsync();
         }
     }
 }
