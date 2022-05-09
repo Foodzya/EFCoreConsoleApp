@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace EcommerceStore.Infrastucture.Data.Configurations
+namespace EcommerceStore.Infrastructure.Data.Configurations
 {
     public class SectionConfiguration : IEntityTypeConfiguration<Section>
     {

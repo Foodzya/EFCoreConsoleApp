@@ -99,7 +99,7 @@ namespace EcommerceStore.Application.Services
             var brand = await _brandRepository.GetByIdAsync(brandId);
 
             if (brand is null)
-                throw new ValidationException(ExceptionMessages.BrandNotFound);
+                throw new ValidationException(ExceptionMessages.BrandNotFound, brandId);
 
             brand.IsDeleted = true;
 

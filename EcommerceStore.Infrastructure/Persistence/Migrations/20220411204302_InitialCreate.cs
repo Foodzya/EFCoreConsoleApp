@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
-namespace EcommerceStore.Infrastucture.Persistence.Migrations
+namespace EcommerceStore.Infrastructure.Persistence.Migrations
 {
     public partial class InitialCreate : Migration
     {

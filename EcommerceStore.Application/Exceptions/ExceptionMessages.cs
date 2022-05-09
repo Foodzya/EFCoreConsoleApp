@@ -6,5 +6,7 @@
         public static string BrandAlreadyExists { get; private set; } = "Brand with id={0} already exists";
         public static string ProductNotFound { get; private set; } = "Product not found for provided productId={0}";
         public static string ProductAlreadyExists { get; private set; } = "Product with id={0} already exists";
+        public static string RoleNotFound { get; private set; } = "Role not found for provided roleId={0}";
+        public static string RoleAlreadyExists { get; private set; } = "Role with id={0} already exists";
     }
 }

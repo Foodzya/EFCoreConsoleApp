@@ -24,9 +24,7 @@ namespace EcommerceStore.Application.Services
             var existingProduct = await _productRepository.GetByNameAsync(productIm.Name);
 
             if (existingProduct != null)
-            {
                 throw new ValidationException(ExceptionMessages.ProductAlreadyExists, existingProduct.Id);
-            }
 
             var product = new Product
             {
@@ -85,7 +83,7 @@ namespace EcommerceStore.Application.Services
             return productViewModel;
         }
 
-        public async Task RemoveProductAsync(int productId)
+        public async Task RemoveProductByIdAsync(int productId)
         {
             var product = await _productRepository.GetByIdAsync(productId);
 

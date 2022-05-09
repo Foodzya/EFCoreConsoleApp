@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using EcommerceStore.Domain.Entities;
 using EcommerceStore.Domain.Interfaces;
-using EcommerceStore.Infrastucture.Persistence;
+using EcommerceStore.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace EcommerceStore.Infrastucture.Repositories 
+namespace EcommerceStore.Infrastructure.Repositories 
 {
     public class ProductRepository : IProductRepository
     {

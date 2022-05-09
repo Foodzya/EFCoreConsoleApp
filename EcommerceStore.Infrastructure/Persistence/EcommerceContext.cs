@@ -1,20 +1,19 @@
 ﻿using EcommerceStore.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Reflection;
 
-namespace EcommerceStore.Infrastucture.Persistence
+namespace EcommerceStore.Infrastructure.Persistence
 {
     public class EcommerceContext : DbContext
     {
+        public EcommerceContext() { }
+
         public EcommerceContext(DbContextOptions<EcommerceContext> options)
             : base(options)
         {
 
         }
-
-        public EcommerceContext() { }
 
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Brand> Brands { get; set; }

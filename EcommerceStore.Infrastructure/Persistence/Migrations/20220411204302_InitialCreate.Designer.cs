@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace EcommerceStore.Infrastucture.Persistence.Migrations
+namespace EcommerceStore.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(EcommerceContext))]
     [Migration("20220411204302_InitialCreate")]

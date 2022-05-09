@@ -60,7 +60,7 @@ namespace EcommerceStore.API.Controllers
         [HttpDelete("{productId}")]
         public async Task<ActionResult> DeleteByIdAsync([FromRoute] int productId)
         {
-            await _productService.RemoveProductAsync(productId);
+            await _productService.RemoveProductByIdAsync(productId);
 
             return Ok();
         }

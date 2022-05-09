@@ -4,14 +4,14 @@
 
 namespace EcommerceStore.Infrastructure.Persistence.Migrations
 {
-    public partial class AddBrandIsDeleted : Migration
+    public partial class AddIsDeletedForRole : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<bool>(
                 name: "isdeleted",
                 schema: "ecommerce",
-                table: "brands",
+                table: "roles",
                 type: "boolean",
                 nullable: false,
                 defaultValue: false);
@@ -22,7 +22,7 @@ namespace EcommerceStore.Infrastructure.Persistence.Migrations
             migrationBuilder.DropColumn(
                 name: "isdeleted",
                 schema: "ecommerce",
-                table: "brands");
+                table: "roles");
         }
     }
 }

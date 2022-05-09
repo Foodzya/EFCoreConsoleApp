@@ -1,8 +1,8 @@
 ﻿using EcommerceStore.Application.Interfaces;
 using EcommerceStore.Application.Services;
 using EcommerceStore.Domain.Interfaces;
-using EcommerceStore.Infrastucture.Persistence;
-using EcommerceStore.Infrastucture.Repositories;
+using EcommerceStore.Infrastructure.Repositories;
+using EcommerceStore.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +29,8 @@ namespace EcommerceStore.API
             services.AddTransient<IBrandService, BrandService>();
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<IProductService, ProductService>();
+            services.AddTransient<IRoleRepository, RoleRepository>();
+            services.AddTransient<IRoleService, RoleService>();
 
             services.AddControllers()
                 .ConfigureApiBehaviorOptions(options =>

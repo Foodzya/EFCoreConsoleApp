@@ -11,6 +11,6 @@ namespace EcommerceStore.Application.Interfaces
         public Task<List<ProductViewModel>> GetAllProductsAsync();
         public Task CreateProductAsync(ProductInputModel productInputModel);
         public Task UpdateProductAsync(int productId, ProductInputModel productInputModel);
-        public Task RemoveProductAsync(int productId);
+        public Task RemoveProductByIdAsync(int productId);
     }
 }
