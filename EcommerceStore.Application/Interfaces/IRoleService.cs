@@ -10,6 +10,5 @@ namespace EcommerceStore.Application.Interfaces
         public Task CreateRoleAsync(RoleInputModel roleInputModel);
         public Task RemoveRoleByIdAsync(int roleId);
         public Task UpdateRoleAsync(int roleId, RoleInputModel roleInputModel);
-        public Task SaveChangesAsync();
     }
 }

@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using EcommerceStore.API.Middleware;
 
 namespace EcommerceStore.API
 {
@@ -31,6 +32,10 @@ namespace EcommerceStore.API
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IRoleRepository, RoleRepository>();
             services.AddTransient<IRoleService, RoleService>();
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IAddressRepository, AddressRepository>();
+            services.AddTransient<IAddressService, AddressService>();
 
             services.AddControllers()
                 .ConfigureApiBehaviorOptions(options =>
@@ -51,6 +56,8 @@ namespace EcommerceStore.API
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseMiddleware<ErrorHandlerMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

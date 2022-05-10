@@ -100,9 +100,7 @@ namespace EcommerceStore.Application.Services
             var existingProduct = await _productRepository.GetByNameAsync(productIm.Name);
 
             if (existingProduct != null && existingProduct.Id != productId)
-            {
                 throw new ValidationException(ExceptionMessages.ProductAlreadyExists);
-            }
 
             var product = await _productRepository.GetByIdAsync(productId);
 

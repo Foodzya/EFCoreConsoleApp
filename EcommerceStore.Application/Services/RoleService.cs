@@ -63,11 +63,6 @@ namespace EcommerceStore.Application.Services
             await _roleRepository.SaveChangesAsync();
         }
 
-        public async Task SaveChangesAsync()
-        {
-            await _roleRepository.SaveChangesAsync();
-        }
-
         public async Task UpdateRoleAsync(int roleId, RoleInputModel roleInputModel)
         {
             var existingRole = await _roleRepository.GetByNameAsync(roleInputModel.Name);
