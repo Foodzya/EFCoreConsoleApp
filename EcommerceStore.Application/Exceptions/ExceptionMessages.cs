@@ -11,5 +11,6 @@
         public static string UserNotFound { get; private set; } = "User not found for provided userId={0}";
         public static string UserAlreadyExists { get; private set; } = "User with id={0} already exists";
         public static string AddressNotFound { get; private set; } = "Address not found for provided addressId={0}";
+        public static string OrderNotFound { get; private set; } = "Order not found for provided orderId={0}";
     }
 }

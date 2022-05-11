@@ -1,8 +1,4 @@
-﻿using EcommerceStore.Application.Interfaces;
-using EcommerceStore.Application.Services;
-using EcommerceStore.Domain.Interfaces;
-using EcommerceStore.Infrastructure.Repositories;
-using EcommerceStore.Infrastructure.Persistence;
+﻿using EcommerceStore.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using EcommerceStore.API.Middleware;
+using EcommerceStore.API.Extensions.DependencyInjection;
+using System;
 
 namespace EcommerceStore.API
 {
@@ -26,16 +24,9 @@ namespace EcommerceStore.API
         {
             services.AddDbContext<EcommerceContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("EcommerceConnection")));
 
-            services.AddTransient<IBrandRepository, BrandRepository>();
-            services.AddTransient<IBrandService, BrandService>();
-            services.AddTransient<IProductRepository, ProductRepository>();
-            services.AddTransient<IProductService, ProductService>();
-            services.AddTransient<IRoleRepository, RoleRepository>();
-            services.AddTransient<IRoleService, RoleService>();
-            services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<IUserService, UserService>();
-            services.AddTransient<IAddressRepository, AddressRepository>();
-            services.AddTransient<IAddressService, AddressService>();
+            services.AddTransientDomainServices();
+
+            services.AddTransientRepositories();
 
             services.AddControllers()
                 .ConfigureApiBehaviorOptions(options =>
@@ -63,6 +54,8 @@ namespace EcommerceStore.API
             {
                 endpoints.MapControllers();
             });
+
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         }
     }
 }

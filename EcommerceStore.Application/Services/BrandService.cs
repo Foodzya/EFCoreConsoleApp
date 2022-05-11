@@ -24,9 +24,7 @@ namespace EcommerceStore.Application.Services
             var existingBrand = await _brandRepository.GetByNameAsync(brandIm.Name);
 
             if (existingBrand.Name != null)
-            {
                 throw new ValidationException(ExceptionMessages.BrandAlreadyExists, existingBrand.Id);
-            }
 
             var brand = new Brand
             {
@@ -47,6 +45,7 @@ namespace EcommerceStore.Application.Services
                 throw new ValidationException(ExceptionMessages.BrandNotFound);
 
             var brandsViewModel = brands
+                .Where(b => !b.IsDeleted)
                 .Select(b => new BrandViewModel
                 {
                     Name = b.Name,
@@ -62,7 +61,7 @@ namespace EcommerceStore.Application.Services
         {
             var brand = await _brandRepository.GetByIdAsync(brandId);
 
-            if (brand is null)
+            if (brand is null || brand.IsDeleted)
                 throw new ValidationException(ExceptionMessages.BrandNotFound, brandId);
 
             var brandViewModel = new BrandViewModel
@@ -80,9 +79,7 @@ namespace EcommerceStore.Application.Services
             var existingBrand = await _brandRepository.GetByNameAsync(brandIm.Name);
 
             if (existingBrand != null && existingBrand.Id != brandId)
-            {
                 throw new ValidationException(ExceptionMessages.BrandAlreadyExists, brandId);
-            }
 
             var brand = await _brandRepository.GetByIdAsync(brandId);
 
