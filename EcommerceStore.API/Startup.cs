@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using EcommerceStore.API.Middleware;
 using EcommerceStore.API.Extensions.DependencyInjection;
 using System;
+using Microsoft.OpenApi.Models;
 
 namespace EcommerceStore.API
 {
@@ -33,6 +34,17 @@ namespace EcommerceStore.API
                 {
                     options.SuppressModelStateInvalidFilter = true;
                 });
+
+            services.AddSwaggerGen(opt =>
+            {
+                opt.SwaggerDoc("v1",
+                    new OpenApiInfo
+                    {
+                        Title = "Ecommerce API",
+                        Description = "Ecommerce API for working with Ecommerce Store",
+                        Version = "v1"
+                    });
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -53,6 +65,13 @@ namespace EcommerceStore.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(opt =>
+            {
+                opt.SwaggerEndpoint("/swagger/v1/swagger.json", "Ecommerce API");
             });
 
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
