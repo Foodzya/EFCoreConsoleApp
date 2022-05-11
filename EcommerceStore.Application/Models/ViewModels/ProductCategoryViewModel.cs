@@ -1,4 +1,4 @@
-﻿using EcommerceStore.Domain.Entities;
+﻿using System.Collections.Generic;
 
 namespace EcommerceStore.Application.Models.ViewModels
 {
@@ -6,7 +6,6 @@ namespace EcommerceStore.Application.Models.ViewModels
     {
         public string Name { get; set; }
         public string ParentCategoryName { get; set; }
-        public string SubCategoryName { get; set; }
-        public List<Product> Products { get; set; }
+        public List<ProductViewModel> Products { get; set; }
     }
 }

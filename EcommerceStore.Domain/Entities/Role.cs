@@ -1,4 +1,6 @@
-﻿namespace EcommerceStore.Domain.Entities
+﻿using System.Collections.Generic;
+
+namespace EcommerceStore.Domain.Entities
 {
     public class Role
     {

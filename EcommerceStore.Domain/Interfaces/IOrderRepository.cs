@@ -1,4 +1,6 @@
-﻿using EcommerceStore.Domain.Entities;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using EcommerceStore.Domain.Entities;
 
 namespace EcommerceStore.Domain.Interfaces
 {

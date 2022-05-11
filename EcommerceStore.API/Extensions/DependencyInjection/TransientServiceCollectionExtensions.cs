@@ -16,6 +16,7 @@ namespace EcommerceStore.API.Extensions.DependencyInjection
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IAddressService, AddressService>();
             services.AddTransient<IOrderService, OrderService>();
+            services.AddTransient<IProductCategoryRepository, ProductCategoryRepository>();
 
             return services;
         }
@@ -28,6 +29,7 @@ namespace EcommerceStore.API.Extensions.DependencyInjection
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IAddressRepository, AddressRepository>();
             services.AddTransient<IOrderRepository, OrderRepository>();
+            services.AddTransient<IProductCategoryService, ProductCategoryService>();
 
             return services;
         }

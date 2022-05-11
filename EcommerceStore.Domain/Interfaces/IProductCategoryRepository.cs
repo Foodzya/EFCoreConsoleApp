@@ -1,4 +1,6 @@
-﻿using EcommerceStore.Domain.Entities;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using EcommerceStore.Domain.Entities;
 
 namespace EcommerceStore.Domain.Interfaces
 {
@@ -9,6 +11,7 @@ namespace EcommerceStore.Domain.Interfaces
         public Task CreateAsync(ProductCategory productCategory);
         public void Remove(ProductCategory productCategory);
         public void Update(ProductCategory productCategory);
+        public Task<ProductCategory> GetByNameAsync(string productCategoryName);
         public Task SaveChangesAsync();
     }
 }

@@ -1,4 +1,6 @@
-﻿using EcommerceStore.Domain.Entities;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using EcommerceStore.Domain.Entities;
 using EcommerceStore.Domain.Interfaces;
 using EcommerceStore.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +24,8 @@ namespace EcommerceStore.Infrastructure.Repositories
         public async Task<List<ProductCategory>> GetAllAsync()
         {
             var productCategories = await _context.ProductCategories
-                .Include(p => p.Products)
+                .Include(p => p.Products).ThenInclude(p => p.Brand)
+                .Include(p => p.Products).ThenInclude(p => p.ProductCategory)
                 .ToListAsync();
 
             return productCategories;
@@ -33,6 +36,11 @@ namespace EcommerceStore.Infrastructure.Repositories
             return await _context.ProductCategories
                 .Include(p => p.Products)
                 .FirstOrDefaultAsync(p => p.Id == productCategoryId);
+        }
+
+        public async Task<ProductCategory> GetByNameAsync(string productCategoryName)
+        {
+            return await _context.ProductCategories.FirstOrDefaultAsync(p => p.Name == productCategoryName);
         }
 
         public void Remove(ProductCategory productCategory)

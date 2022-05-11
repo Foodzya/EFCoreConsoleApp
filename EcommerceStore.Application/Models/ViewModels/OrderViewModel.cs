@@ -1,4 +1,6 @@
-﻿namespace EcommerceStore.Application.Models.ViewModels
+﻿using System;
+
+namespace EcommerceStore.Application.Models.ViewModels
 {
     public class OrderViewModel
     {
