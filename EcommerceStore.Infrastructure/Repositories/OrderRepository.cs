@@ -25,6 +25,8 @@ namespace EcommerceStore.Infrastructure.Repositories
         {
             var orders = await _context.Orders
                 .Include(o => o.User)
+                .Include(o => o.ProductOrders)
+                    .ThenInclude(p => p.Product)
                 .ToListAsync();
 
             return orders;
@@ -34,6 +36,8 @@ namespace EcommerceStore.Infrastructure.Repositories
         {
             var order = await _context.Orders
                 .Include(o => o.User)
+                .Include(o => o.ProductOrders)
+                    .ThenInclude(p => p.Product)
                 .FirstOrDefaultAsync(o => o.Id == orderId);
 
             return order;

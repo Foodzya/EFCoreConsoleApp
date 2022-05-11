@@ -9,6 +9,8 @@ using EcommerceStore.API.Middleware;
 using EcommerceStore.API.Extensions.DependencyInjection;
 using System;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
+using System.IO;
 
 namespace EcommerceStore.API
 {
@@ -44,6 +46,9 @@ namespace EcommerceStore.API
                         Description = "Ecommerce API for working with Ecommerce Store",
                         Version = "v1"
                     });
+
+                var xmlFileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFileName));
             });
         }
 
@@ -72,6 +77,7 @@ namespace EcommerceStore.API
             app.UseSwaggerUI(opt =>
             {
                 opt.SwaggerEndpoint("/swagger/v1/swagger.json", "Ecommerce API");
+                opt.RoutePrefix = string.Empty;
             });
 
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);

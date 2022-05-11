@@ -16,5 +16,7 @@
         public static string ProductCategoryNotFound { get; private set; } = "Product category not found for provided productCategoryId={0}";
         public static string SectionNotFound { get; private set; } = "Section not found for provided sectionId={0}";
         public static string SectionAlreadyExists { get; private set; } = "Section with id={0} already exists";
+        public static string ReviewNotFound { get; private set; } = "Review not found for provided reviewId={0}";
+        public static string ReviewAlreadyExists { get; private set; } = "Review with id={0} already exists";
     }
 }

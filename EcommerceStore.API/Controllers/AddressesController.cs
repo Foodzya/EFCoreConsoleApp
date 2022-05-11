@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace EcommerceStore.API.Controllers
 {
+    /// <summary>
+    /// Address controller for managing Addresses using CRUD operations
+    /// </summary>
     [ApiController]
     [Route("api/addresses")]
     public class AddressesController : ControllerBase
@@ -19,6 +22,11 @@ namespace EcommerceStore.API.Controllers
             _addressService = addressService;
         }
 
+        /// <summary>
+        /// Get address by specific ID 
+        /// </summary>
+        /// <param name="addressId"></param>
+        /// <returns></returns>
         [HttpGet("{addressId}")]
         public async Task<ActionResult<AddressViewModel>> GetByIdAsync([FromRoute] int addressId)
         {
@@ -26,7 +34,11 @@ namespace EcommerceStore.API.Controllers
 
             return Ok(addressViewModel);
         }
-
+        
+        /// <summary>
+        /// Get all existing addresses
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult<List<AddressViewModel>>> GetAllAsync()
         {
@@ -35,6 +47,11 @@ namespace EcommerceStore.API.Controllers
             return Ok(addressesViewModel);
         }
 
+        /// <summary>
+        /// Deletes the address by specific ID
+        /// </summary>
+        /// <param name="addressId"></param>
+        /// <returns></returns>
         [HttpDelete("{addressId}")]
         public async Task<ActionResult> DeleteByIdAsync([FromRoute] int addressId)
         {
@@ -43,6 +60,22 @@ namespace EcommerceStore.API.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Creates an address
+        /// </summary>
+        /// <param name="addressInputModel"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// Sample request:
+        /// POST /addresses
+        /// {
+        ///     "streetAddress": "some address details",
+        ///     "postcode": 123456,
+        ///     "city": "some city",
+        ///     "userId": 1
+        /// }
+        /// </remarks>
+        /// <exception cref="ValidationException"></exception>
         [HttpPost]
         public async Task<ActionResult> CreateAsync([FromBody] AddressInputModel addressInputModel)
         {
@@ -54,6 +87,13 @@ namespace EcommerceStore.API.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Updates an existing address
+        /// </summary>
+        /// <param name="addressId"></param>
+        /// <param name="addressInputModel"></param>
+        /// <returns></returns>
+        /// <exception cref="ValidationException"></exception>
         [HttpPut("{addressId}")]
         public async Task<ActionResult> UpdateAsync([FromRoute] int addressId, [FromBody] AddressInputModel addressInputModel)
         {

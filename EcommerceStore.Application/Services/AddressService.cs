@@ -46,7 +46,7 @@ namespace EcommerceStore.Application.Services
                 City = address.City,
                 PostCode = address.PostCode,
                 StreetAddress = address.StreetAddress,
-                UserFullName = $"{address.User.FirstName} + \" \" + {address.User.LastName}"
+                UserFullName = $"{address.User.FirstName} {address.User.LastName}"
             };
 
             return addressViewModel;
@@ -64,7 +64,7 @@ namespace EcommerceStore.Application.Services
                     City = a.City,
                     PostCode = a.PostCode,
                     StreetAddress = a.StreetAddress,
-                    UserFullName = $"{a.User.FirstName} + \" \" + {a.User.LastName}"
+                    UserFullName = $"{a.User.FirstName} {a.User.LastName}"
                 })
                 .ToList();
 

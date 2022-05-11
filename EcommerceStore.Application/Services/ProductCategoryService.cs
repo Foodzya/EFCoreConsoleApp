@@ -46,8 +46,7 @@ namespace EcommerceStore.Application.Services
                 .Select(p => new ProductCategoryViewModel
                 {
                     Name = p.Name,
-                    ParentCategoryName = p.ParentCategory.Name,
-                    Products = p.Products
+                    Products = p.Products?
                         .Select(p => new ProductViewModel
                         {
                             Name = p.Name,
@@ -75,7 +74,6 @@ namespace EcommerceStore.Application.Services
             var productCategoryViewModel = new ProductCategoryViewModel
             {
                 Name = productCategory.Name,
-                ParentCategoryName = productCategory.ParentCategory.Name,
                 Products = productCategory.Products
                     .Select(p => new ProductViewModel
                     {

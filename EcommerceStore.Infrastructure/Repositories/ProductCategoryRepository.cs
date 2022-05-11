@@ -24,8 +24,8 @@ namespace EcommerceStore.Infrastructure.Repositories
         public async Task<List<ProductCategory>> GetAllAsync()
         {
             var productCategories = await _context.ProductCategories
-                .Include(p => p.Products).ThenInclude(p => p.Brand)
-                .Include(p => p.Products).ThenInclude(p => p.ProductCategory)
+                .Include(p => p.Products)
+                    .ThenInclude(p => p.Brand)
                 .ToListAsync();
 
             return productCategories;
@@ -35,6 +35,7 @@ namespace EcommerceStore.Infrastructure.Repositories
         {
             return await _context.ProductCategories
                 .Include(p => p.Products)
+                    .ThenInclude(p => p.Brand)
                 .FirstOrDefaultAsync(p => p.Id == productCategoryId);
         }
 

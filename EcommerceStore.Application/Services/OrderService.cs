@@ -44,9 +44,15 @@ namespace EcommerceStore.Application.Services
                 .Where(o => !o.IsDeleted)
                 .Select(o => new OrderViewModel
                 {
-                    ModifiedDate = o.ModifiedDate,
                     Status = o.Status,
-                    CustomerFullName = $"{o.User.FirstName}" + " " + $"{o.User.LastName}"
+                    CustomerFullName = $"{o.User.FirstName} {o.User.LastName}",
+                    ProductNames = o.ProductOrders
+                        .Where(p => p.OrderId == o.Id)
+                        .Select(p => p.Product.Name)
+                        .ToList(),
+                    TotalPrice = o.ProductOrders
+                        .Where(p => p.OrderId == o.Id)
+                        .Sum(p => p.Price)
                 })
                 .ToList();
 
@@ -62,9 +68,15 @@ namespace EcommerceStore.Application.Services
 
             var orderViewModel = new OrderViewModel
             {
-                ModifiedDate = order.ModifiedDate,
                 Status = order.Status,
-                CustomerFullName = $"{order.User.FirstName}" + " " + $"{order.User.LastName}"
+                CustomerFullName = $"{order.User.FirstName} {order.User.LastName}",
+                ProductNames = order.ProductOrders
+                        .Where(p => p.OrderId == order.Id)
+                        .Select(p => p.Product.Name)
+                        .ToList(),
+                TotalPrice = order.ProductOrders
+                        .Where(p => p.OrderId == order.Id)
+                        .Sum(p => p.Price)
             };
 
             return orderViewModel;
