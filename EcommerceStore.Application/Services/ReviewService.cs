@@ -39,7 +39,7 @@ namespace EcommerceStore.Application.Services
             var reviews = await _reviewRepository.GetAllAsync();
 
             if (reviews is null)
-                throw new ValidationException(ExceptionMessages.ReviewNotFound);
+                throw new ValidationException(NotFoundExceptionMessages.ReviewNotFound);
 
             var reviewsViewModel = reviews
                 .Select(r => new ReviewViewModel
@@ -59,7 +59,7 @@ namespace EcommerceStore.Application.Services
             var review = await _reviewRepository.GetByIdAsync(reviewId);
 
             if (review is null)
-                throw new ValidationException(ExceptionMessages.ReviewNotFound, reviewId);
+                throw new ValidationException(NotFoundExceptionMessages.ReviewNotFound, reviewId);
 
             var reviewViewModel = new ReviewViewModel
             {
@@ -77,7 +77,7 @@ namespace EcommerceStore.Application.Services
             var review = await _reviewRepository.GetByIdAsync(reviewId);
 
             if (review is null)
-                throw new ValidationException(ExceptionMessages.ReviewNotFound, reviewId);
+                throw new ValidationException(NotFoundExceptionMessages.ReviewNotFound, reviewId);
 
             _reviewRepository.Remove(review);
 
@@ -89,7 +89,7 @@ namespace EcommerceStore.Application.Services
             var review = await _reviewRepository.GetByIdAsync(reviewId);
 
             if (review is null)
-                throw new ValidationException(ExceptionMessages.ReviewNotFound, reviewId);
+                throw new ValidationException(NotFoundExceptionMessages.ReviewNotFound, reviewId);
 
             review.Rating = reviewInputModel.Rating;
             review.Comment = reviewInputModel.Comment;

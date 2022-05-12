@@ -24,7 +24,7 @@ namespace EcommerceStore.Application.Services
             var roles = await _roleRepository.GetAllAsync();
 
             if (roles is null)
-                throw new ValidationException(ExceptionMessages.RoleNotFound);
+                throw new ValidationException(NotFoundExceptionMessages.RoleNotFound);
 
             var rolesViewModel = roles
                 .Where(r => !r.IsDeleted)
@@ -42,7 +42,7 @@ namespace EcommerceStore.Application.Services
             var role = await _roleRepository.GetByIdAsync(roleId);
 
             if (role is null || role.IsDeleted)
-                throw new ValidationException(ExceptionMessages.RoleNotFound, roleId);
+                throw new ValidationException(NotFoundExceptionMessages.RoleNotFound, roleId);
 
             var roleViewModel = new RoleViewModel
             {
@@ -57,7 +57,7 @@ namespace EcommerceStore.Application.Services
             var role = await _roleRepository.GetByIdAsync(roleId);
 
             if (role is null || role.IsDeleted)
-                throw new ValidationException(ExceptionMessages.RoleNotFound, roleId);
+                throw new ValidationException(NotFoundExceptionMessages.RoleNotFound, roleId);
 
             role.IsDeleted = true;
 
@@ -71,12 +71,12 @@ namespace EcommerceStore.Application.Services
             var existingRole = await _roleRepository.GetByNameAsync(roleInputModel.Name);
 
             if (existingRole != null && existingRole.Id != roleId)
-                throw new ValidationException(ExceptionMessages.RoleAlreadyExists, roleId);
+                throw new ValidationException(AlreadyExistExceptionMessages.RoleAlreadyExists, roleId);
 
             var role = await _roleRepository.GetByIdAsync(roleId);
 
             if (role.IsDeleted)
-                throw new ValidationException(ExceptionMessages.RoleNotFound, roleId);
+                throw new ValidationException(NotFoundExceptionMessages.RoleNotFound, roleId);
 
             role.Name = roleInputModel.Name;
 
@@ -90,7 +90,7 @@ namespace EcommerceStore.Application.Services
             var existingRole = await _roleRepository.GetByNameAsync(roleInputModel.Name);
 
             if (existingRole != null)
-                throw new ValidationException(ExceptionMessages.RoleAlreadyExists, existingRole.Id);
+                throw new ValidationException(AlreadyExistExceptionMessages.RoleAlreadyExists, existingRole.Id);
 
             var role = new Role
             {

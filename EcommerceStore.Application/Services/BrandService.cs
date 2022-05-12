@@ -24,7 +24,7 @@ namespace EcommerceStore.Application.Services
             var existingBrand = await _brandRepository.GetByNameAsync(brandIm.Name);
 
             if (existingBrand.Name != null)
-                throw new ValidationException(ExceptionMessages.BrandAlreadyExists, existingBrand.Id);
+                throw new ValidationException(AlreadyExistExceptionMessages.BrandAlreadyExists, existingBrand.Id);
 
             var brand = new Brand
             {
@@ -42,7 +42,7 @@ namespace EcommerceStore.Application.Services
             var brands = await _brandRepository.GetAllAsync();
 
             if (brands is null)
-                throw new ValidationException(ExceptionMessages.BrandNotFound);
+                throw new ValidationException(NotFoundExceptionMessages.BrandNotFound);
 
             var brandsViewModel = brands
                 .Where(b => !b.IsDeleted)
@@ -62,7 +62,7 @@ namespace EcommerceStore.Application.Services
             var brand = await _brandRepository.GetByIdAsync(brandId);
 
             if (brand is null || brand.IsDeleted)
-                throw new ValidationException(ExceptionMessages.BrandNotFound, brandId);
+                throw new ValidationException(NotFoundExceptionMessages.BrandNotFound, brandId);
 
             var brandViewModel = new BrandViewModel
             {
@@ -79,7 +79,7 @@ namespace EcommerceStore.Application.Services
             var existingBrand = await _brandRepository.GetByNameAsync(brandIm.Name);
 
             if (existingBrand != null && existingBrand.Id != brandId)
-                throw new ValidationException(ExceptionMessages.BrandAlreadyExists, brandId);
+                throw new ValidationException(AlreadyExistExceptionMessages.BrandAlreadyExists, brandId);
 
             var brand = await _brandRepository.GetByIdAsync(brandId);
 
@@ -96,7 +96,7 @@ namespace EcommerceStore.Application.Services
             var brand = await _brandRepository.GetByIdAsync(brandId);
 
             if (brand is null)
-                throw new ValidationException(ExceptionMessages.BrandNotFound, brandId);
+                throw new ValidationException(NotFoundExceptionMessages.BrandNotFound, brandId);
 
             brand.IsDeleted = true;
 

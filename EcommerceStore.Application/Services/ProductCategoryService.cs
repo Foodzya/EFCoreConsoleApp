@@ -24,7 +24,7 @@ namespace EcommerceStore.Application.Services
             var existingProductCategory = await _productCategoryRepository.GetByNameAsync(productCategoryInputModel.Name);
 
             if (existingProductCategory != null)
-                throw new ValidationException(ExceptionMessages.ProductCategoryAlreadyExists);
+                throw new ValidationException(AlreadyExistExceptionMessages.ProductCategoryAlreadyExists);
 
             var productCategory = new ProductCategory
             {
@@ -40,7 +40,7 @@ namespace EcommerceStore.Application.Services
             var productCategories = await _productCategoryRepository.GetAllAsync();
 
             if (productCategories is null)
-                throw new ValidationException(ExceptionMessages.ProductCategoryNotFound);
+                throw new ValidationException(NotFoundExceptionMessages.ProductCategoryNotFound);
 
             var productCategoriesViewModel = productCategories
                 .Select(p => new ProductCategoryViewModel
@@ -69,7 +69,7 @@ namespace EcommerceStore.Application.Services
             var productCategory = await _productCategoryRepository.GetByIdAsync(productCategoryId);
 
             if (productCategory is null)
-                throw new ValidationException(ExceptionMessages.ProductCategoryNotFound, productCategoryId);
+                throw new ValidationException(NotFoundExceptionMessages.ProductCategoryNotFound, productCategoryId);
 
             var productCategoryViewModel = new ProductCategoryViewModel
             {
@@ -96,7 +96,7 @@ namespace EcommerceStore.Application.Services
             var productCategory = await _productCategoryRepository.GetByIdAsync(productCategoryId);
 
             if (productCategory is null)
-                throw new ValidationException(ExceptionMessages.ProductCategoryNotFound, productCategoryId);
+                throw new ValidationException(NotFoundExceptionMessages.ProductCategoryNotFound, productCategoryId);
 
             _productCategoryRepository.Remove(productCategory);
 
@@ -108,7 +108,7 @@ namespace EcommerceStore.Application.Services
             var existingProductCategory = await _productCategoryRepository.GetByNameAsync(productCategoryInputModel.Name);
 
             if (existingProductCategory != null && existingProductCategory.Id != productCategoryId)
-                throw new ValidationException(ExceptionMessages.ProductCategoryAlreadyExists, productCategoryId);
+                throw new ValidationException(AlreadyExistExceptionMessages.ProductCategoryAlreadyExists, productCategoryId);
 
             var productCategory = await _productCategoryRepository.GetByIdAsync(productCategoryId);
 

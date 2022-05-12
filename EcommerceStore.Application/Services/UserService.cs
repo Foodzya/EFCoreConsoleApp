@@ -24,7 +24,7 @@ namespace EcommerceStore.Application.Services
             var existingUser = await _userRepository.GetByEmailAsync(userInputModel.Email);
 
             if (existingUser != null)
-                throw new ValidationException(ExceptionMessages.UserAlreadyExists);
+                throw new ValidationException(AlreadyExistExceptionMessages.UserAlreadyExists);
 
             var user = new User
             {
@@ -45,7 +45,7 @@ namespace EcommerceStore.Application.Services
             var users = await _userRepository.GetAllAsync();
 
             if (users is null)
-                throw new ValidationException(ExceptionMessages.UserNotFound);
+                throw new ValidationException(NotFoundExceptionMessages.UserNotFound);
 
             var usersViewModel = users
                 .Select(u => new UserViewModel
@@ -66,7 +66,7 @@ namespace EcommerceStore.Application.Services
             var user = await _userRepository.GetByIdAsync(userId);
 
             if (user is null)
-                throw new ValidationException(ExceptionMessages.UserNotFound, userId);
+                throw new ValidationException(NotFoundExceptionMessages.UserNotFound, userId);
 
             var userViewModel = new UserViewModel
             {
@@ -85,7 +85,7 @@ namespace EcommerceStore.Application.Services
             var user = await _userRepository.GetByIdAsync(userId);
 
             if (user is null)
-                throw new ValidationException(ExceptionMessages.UserNotFound, userId);
+                throw new ValidationException(NotFoundExceptionMessages.UserNotFound, userId);
 
             _userRepository.Remove(user);
 
@@ -97,12 +97,12 @@ namespace EcommerceStore.Application.Services
             var existingUser = await _userRepository.GetByEmailAsync(userInputModel.Email);
 
             if (existingUser != null && existingUser.Id != userId)
-                throw new ValidationException(ExceptionMessages.UserAlreadyExists, userId);
+                throw new ValidationException(AlreadyExistExceptionMessages.UserAlreadyExists, userId);
 
             var user = await _userRepository.GetByIdAsync(userId);
 
             if (user is null)
-                throw new ValidationException(ExceptionMessages.UserNotFound, userId);
+                throw new ValidationException(NotFoundExceptionMessages.UserNotFound, userId);
 
             user.FirstName = userInputModel.FirstName;
             user.LastName = userInputModel.LastName;

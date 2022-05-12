@@ -38,7 +38,7 @@ namespace EcommerceStore.Application.Services
             var orders = await _orderRepository.GetAllAsync();
 
             if (orders is null)
-                throw new ValidationException(ExceptionMessages.OrderNotFound);
+                throw new ValidationException(NotFoundExceptionMessages.OrderNotFound);
 
             var ordersViewModel = orders
                 .Where(o => !o.IsDeleted)
@@ -64,7 +64,7 @@ namespace EcommerceStore.Application.Services
             var order = await _orderRepository.GetByIdAsync(orderId);
 
             if (order is null || order.IsDeleted)
-                throw new ValidationException(ExceptionMessages.OrderNotFound, orderId);
+                throw new ValidationException(NotFoundExceptionMessages.OrderNotFound, orderId);
 
             var orderViewModel = new OrderViewModel
             {
@@ -87,7 +87,7 @@ namespace EcommerceStore.Application.Services
             var order = await _orderRepository.GetByIdAsync(orderId);
 
             if (order is null)
-                throw new ValidationException(ExceptionMessages.OrderNotFound, orderId);
+                throw new ValidationException(NotFoundExceptionMessages.OrderNotFound, orderId);
 
             order.IsDeleted = true;
 
@@ -101,7 +101,7 @@ namespace EcommerceStore.Application.Services
             var order = await _orderRepository.GetByIdAsync(orderId);
 
             if (order is null || order.IsDeleted)
-                throw new ValidationException(ExceptionMessages.OrderNotFound, orderId);
+                throw new ValidationException(NotFoundExceptionMessages.OrderNotFound, orderId);
 
             order.ModifiedDate = orderInputModel.ModifiedDate;
             order.Status = orderInputModel.Status;

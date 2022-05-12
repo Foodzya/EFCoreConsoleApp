@@ -39,7 +39,7 @@ namespace EcommerceStore.Application.Services
             var address = await _addressRepository.GetByIdAsync(addressId);
 
             if (address is null)
-                throw new ValidationException(ExceptionMessages.AddressNotFound, addressId);
+                throw new ValidationException(NotFoundExceptionMessages.AddressNotFound, addressId);
 
             var addressViewModel = new AddressViewModel
             {
@@ -56,7 +56,7 @@ namespace EcommerceStore.Application.Services
             var addresses = await _addressRepository.GetAllAsync();
 
             if (addresses is null)
-                throw new ValidationException(ExceptionMessages.AddressNotFound);
+                throw new ValidationException(NotFoundExceptionMessages.AddressNotFound);
 
             var addressesViewModel = addresses
                 .Select(a => new AddressViewModel
@@ -76,7 +76,7 @@ namespace EcommerceStore.Application.Services
             var address = await _addressRepository.GetByIdAsync(addressId);
 
             if (address is null)
-                throw new ValidationException(ExceptionMessages.AddressNotFound, addressId);
+                throw new ValidationException(NotFoundExceptionMessages.AddressNotFound, addressId);
 
             _addressRepository.Remove(address);
 
@@ -88,7 +88,7 @@ namespace EcommerceStore.Application.Services
             var address = await _addressRepository.GetByIdAsync(addressId);
 
             if (address is null)
-                throw new ValidationException(ExceptionMessages.AddressNotFound, addressId);
+                throw new ValidationException(NotFoundExceptionMessages.AddressNotFound, addressId);
 
             address.PostCode = addressInputModel.PostCode;
             address.City = addressInputModel.City;

@@ -24,7 +24,7 @@ namespace EcommerceStore.Application.Services
             var existingSection = await _sectionRepository.GetByNameAsync(sectionInputModel.Name);
 
             if (existingSection != null)
-                throw new ValidationException(ExceptionMessages.SectionAlreadyExists);
+                throw new ValidationException(AlreadyExistExceptionMessages.SectionAlreadyExists);
 
             var section = new Section
             {
@@ -41,7 +41,7 @@ namespace EcommerceStore.Application.Services
             var sections = await _sectionRepository.GetAllAsync();
 
             if (sections is null)
-                throw new ValidationException(ExceptionMessages.SectionNotFound);
+                throw new ValidationException(NotFoundExceptionMessages.SectionNotFound);
 
             var sectionsViewModel = sections
                 .Select(s => new SectionViewModel
@@ -65,7 +65,7 @@ namespace EcommerceStore.Application.Services
             var section = await _sectionRepository.GetByIdAsync(sectionId);
 
             if (section is null)
-                throw new ValidationException(ExceptionMessages.SectionNotFound, sectionId);
+                throw new ValidationException(NotFoundExceptionMessages.SectionNotFound, sectionId);
 
             var sectionViewModel = new SectionViewModel
             {
@@ -87,7 +87,7 @@ namespace EcommerceStore.Application.Services
             var section = await _sectionRepository.GetByIdAsync(sectionId);
 
             if (section is null)
-                throw new ValidationException(ExceptionMessages.SectionNotFound, sectionId);
+                throw new ValidationException(NotFoundExceptionMessages.SectionNotFound, sectionId);
 
             _sectionRepository.Remove(section);
 
@@ -99,7 +99,7 @@ namespace EcommerceStore.Application.Services
             var existingSection = await _sectionRepository.GetByNameAsync(sectionInputModel.Name);
 
             if (existingSection != null && existingSection.Id != sectionId)
-                throw new ValidationException(ExceptionMessages.SectionAlreadyExists);
+                throw new ValidationException(AlreadyExistExceptionMessages.SectionAlreadyExists);
 
             var section = await _sectionRepository.GetByIdAsync(sectionId);
 

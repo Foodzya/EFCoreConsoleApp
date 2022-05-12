@@ -24,7 +24,7 @@ namespace EcommerceStore.Application.Services
             var existingProduct = await _productRepository.GetByNameAsync(productIm.Name);
 
             if (existingProduct != null)
-                throw new ValidationException(ExceptionMessages.ProductAlreadyExists, existingProduct.Id);
+                throw new ValidationException(AlreadyExistExceptionMessages.ProductAlreadyExists, existingProduct.Id);
 
             var product = new Product
             {
@@ -67,7 +67,7 @@ namespace EcommerceStore.Application.Services
             var product = await _productRepository.GetByIdAsync(productId);
 
             if (product is null)
-                throw new ValidationException(ExceptionMessages.ProductNotFound, productId);
+                throw new ValidationException(NotFoundExceptionMessages.ProductNotFound, productId);
 
             var productViewModel = new ProductViewModel
             {
@@ -88,7 +88,7 @@ namespace EcommerceStore.Application.Services
             var product = await _productRepository.GetByIdAsync(productId);
 
             if (product is null)
-                throw new ValidationException(ExceptionMessages.ProductNotFound, productId);
+                throw new ValidationException(NotFoundExceptionMessages.ProductNotFound, productId);
 
             _productRepository.Remove(product);
 
@@ -100,7 +100,7 @@ namespace EcommerceStore.Application.Services
             var existingProduct = await _productRepository.GetByNameAsync(productIm.Name);
 
             if (existingProduct != null && existingProduct.Id != productId)
-                throw new ValidationException(ExceptionMessages.ProductAlreadyExists);
+                throw new ValidationException(AlreadyExistExceptionMessages.ProductAlreadyExists);
 
             var product = await _productRepository.GetByIdAsync(productId);
 

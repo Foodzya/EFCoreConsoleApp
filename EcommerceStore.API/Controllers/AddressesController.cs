@@ -57,7 +57,9 @@ namespace EcommerceStore.API.Controllers
         /// </summary>
         /// <param name="addressId"></param>
         /// <returns></returns>
+        /// <response code="200">Returns when address is successefully deleted</response>
         [HttpDelete("{addressId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> DeleteByIdAsync([FromRoute] int addressId)
         {
             await _addressService.RemoveAddressByIdAsync(addressId);
@@ -117,7 +119,6 @@ namespace EcommerceStore.API.Controllers
         /// <exception cref="ValidationException"></exception>
         /// <response code="200">Returns when address is successfully updated</response>
         /// <response code="400">If the input address is null or incorrect</response>
-        [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPut("{addressId}")]
