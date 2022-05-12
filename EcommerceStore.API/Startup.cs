@@ -77,7 +77,7 @@ namespace EcommerceStore.API
             app.UseSwaggerUI(opt =>
             {
                 opt.SwaggerEndpoint("/swagger/v1/swagger.json", "Ecommerce API");
-                opt.RoutePrefix = string.Empty;
+                opt.RoutePrefix = "api/docs";
             });
 
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);

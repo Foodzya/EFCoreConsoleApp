@@ -2,6 +2,7 @@
 using EcommerceStore.Application.Interfaces;
 using EcommerceStore.Application.Models.InputModels;
 using EcommerceStore.Application.Models.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 namespace EcommerceStore.API.Controllers
 {
     /// <summary>
-    /// Address controller for managing Addresses using CRUD operations
+    /// Address controller for managing addresses using CRUD operations
     /// </summary>
     [ApiController]
     [Route("api/addresses")]
@@ -27,6 +28,8 @@ namespace EcommerceStore.API.Controllers
         /// </summary>
         /// <param name="addressId"></param>
         /// <returns></returns>
+        /// <response code="200">When address is successfully obtained</response>
+        [ProducesResponseType(typeof(AddressViewModel), StatusCodes.Status200OK)]
         [HttpGet("{addressId}")]
         public async Task<ActionResult<AddressViewModel>> GetByIdAsync([FromRoute] int addressId)
         {
@@ -39,6 +42,8 @@ namespace EcommerceStore.API.Controllers
         /// Get all existing addresses
         /// </summary>
         /// <returns></returns>
+        /// <response code="200">When list of addresses is successfully obtained</response>
+        [ProducesResponseType(typeof(List<AddressViewModel>), StatusCodes.Status200OK)]
         [HttpGet]
         public async Task<ActionResult<List<AddressViewModel>>> GetAllAsync()
         {
@@ -67,20 +72,25 @@ namespace EcommerceStore.API.Controllers
         /// <returns></returns>
         /// <remarks>
         /// Sample request:
-        /// POST /addresses
-        /// {
-        ///     "streetAddress": "some address details",
-        ///     "postcode": 123456,
-        ///     "city": "some city",
-        ///     "userId": 1
-        /// }
+        ///     POST 
+        /// 
+        ///     {
+        ///         "streetAddress": "some address details",
+        ///         "postcode": 123456,
+        ///         "city": "some city",
+        ///         "userId": 1
+        ///     }
         /// </remarks>
         /// <exception cref="ValidationException"></exception>
+        /// <response code="200">Returns when address is successfully created</response>
+        /// <response code="400">If the address is null</response>
         [HttpPost]
+        [ProducesResponseType(typeof(AddressViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> CreateAsync([FromBody] AddressInputModel addressInputModel)
         {
             if (!ModelState.IsValid)
-                throw new ValidationException(ModelState);
+                return BadRequest(ModelState);
 
             await _addressService.CreateAddressAsync(addressInputModel);
 
@@ -93,14 +103,28 @@ namespace EcommerceStore.API.Controllers
         /// <param name="addressId"></param>
         /// <param name="addressInputModel"></param>
         /// <returns></returns>
+        /// <remarks>
+        /// Sample request:
+        ///     POST 
+        /// 
+        ///     {
+        ///         "streetAddress": "some address details",
+        ///         "postcode": 123456,
+        ///         "city": "some city",
+        ///         "userId": 1
+        ///     }
+        /// </remarks>
         /// <exception cref="ValidationException"></exception>
+        /// <response code="200">Returns when address is successfully updated</response>
+        /// <response code="400">If the input address is null or incorrect</response>
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPut("{addressId}")]
         public async Task<ActionResult> UpdateAsync([FromRoute] int addressId, [FromBody] AddressInputModel addressInputModel)
         {
             if (!ModelState.IsValid)
-            {
-                throw new ValidationException(ModelState);
-            }
+                return BadRequest(ModelState);
 
             await _addressService.UpdateAddressAsync(addressId, addressInputModel);
 
