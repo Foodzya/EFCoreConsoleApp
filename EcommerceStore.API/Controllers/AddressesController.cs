@@ -1,5 +1,4 @@
-﻿using EcommerceStore.Application.Exceptions;
-using EcommerceStore.Application.Interfaces;
+﻿using EcommerceStore.Application.Interfaces;
 using EcommerceStore.Application.Models.InputModels;
 using EcommerceStore.Application.Models.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -29,8 +28,8 @@ namespace EcommerceStore.API.Controllers
         /// <param name="addressId"></param>
         /// <returns></returns>
         /// <response code="200">When address is successfully obtained</response>
-        [ProducesResponseType(typeof(AddressViewModel), StatusCodes.Status200OK)]
         [HttpGet("{addressId}")]
+        [ProducesResponseType(typeof(AddressViewModel), StatusCodes.Status200OK)]
         public async Task<ActionResult<AddressViewModel>> GetByIdAsync([FromRoute] int addressId)
         {
             AddressViewModel addressViewModel = await _addressService.GetAddressByIdAsync(addressId);
@@ -43,8 +42,8 @@ namespace EcommerceStore.API.Controllers
         /// </summary>
         /// <returns></returns>
         /// <response code="200">When list of addresses is successfully obtained</response>
-        [ProducesResponseType(typeof(List<AddressViewModel>), StatusCodes.Status200OK)]
         [HttpGet]
+        [ProducesResponseType(typeof(List<AddressViewModel>), StatusCodes.Status200OK)]
         public async Task<ActionResult<List<AddressViewModel>>> GetAllAsync()
         {
             var addressesViewModel = await _addressService.GetAllAddressesAsync();
@@ -81,7 +80,6 @@ namespace EcommerceStore.API.Controllers
         ///         "userId": 1
         ///     }
         /// </remarks>
-        /// <exception cref="ValidationException"></exception>
         /// <response code="200">Returns when address is successfully created</response>
         /// <response code="400">If the address is null</response>
         [HttpPost]
@@ -114,13 +112,11 @@ namespace EcommerceStore.API.Controllers
         ///         "userId": 1
         ///     }
         /// </remarks>
-        /// <exception cref="ValidationException"></exception>
         /// <response code="200">Returns when address is successfully updated</response>
         /// <response code="400">If the input address is null or incorrect</response>
-        [HttpPost]
+        [HttpPut("{addressId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [HttpPut("{addressId}")]
         public async Task<ActionResult> UpdateAsync([FromRoute] int addressId, [FromBody] AddressInputModel addressInputModel)
         {
             if (!ModelState.IsValid)

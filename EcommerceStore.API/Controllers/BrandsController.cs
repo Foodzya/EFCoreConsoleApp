@@ -1,5 +1,4 @@
-﻿using EcommerceStore.Application.Exceptions;
-using EcommerceStore.Application.Interfaces;
+﻿using EcommerceStore.Application.Interfaces;
 using EcommerceStore.Application.Models.InputModels;
 using EcommerceStore.Application.Models.ViewModels;
 using Microsoft.AspNetCore.Http;
