@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EcommerceStore.Application.Exceptions;
@@ -7,51 +8,61 @@ using EcommerceStore.Application.Models.InputModels;
 using EcommerceStore.Application.Models.ViewModels;
 using EcommerceStore.Domain.Entities;
 using EcommerceStore.Domain.Interfaces;
+using EcommerceStore.Infrastructure.Repositories;
 
 namespace EcommerceStore.Application.Services
 {
     public class OrderService : IOrderService
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly IProductRepository _productRepository;
 
-        public OrderService(IOrderRepository orderRepository)
+        public OrderService(IOrderRepository orderRepository, IProductRepository productRepository)
         {
             _orderRepository = orderRepository;
+            _productRepository = productRepository;
         }
 
         public async Task CreateOrderAsync(OrderInputModel orderInputModel)
         {
             var order = new Order
             {
-                ModifiedDate = orderInputModel.ModifiedDate,
-                Status = orderInputModel.Status,
+                ModifiedDate = DateTime.UtcNow,
+                Status = "Created",
                 UserId = orderInputModel.UserId
             };
+
+            var orders = await _orderRepository.GetAllAsync();
+
+            List<Product> products = new List<Product>();
+
+            foreach(var productId in orderInputModel.ProductsIds)
+            {
+                products.Add(await _productRepository.GetByIdAsync(productId));
+            }
 
             await _orderRepository.CreateAsync(order);
 
             await _orderRepository.SaveChangesAsync();
         }
 
-        public async Task<List<OrderViewModel>> GetAllOrdersAsync()
+        public async Task<List<OrderViewModel>> GetAllOrdersForUserAsync(int userId)
         {
-            var orders = await _orderRepository.GetAllAsync();
+            var orders = await _orderRepository.GetAllAsync(userId);
 
             if (orders is null)
                 throw new ValidationException(NotFoundExceptionMessages.OrderNotFound);
 
             var ordersViewModel = orders
-                .Where(o => !o.IsDeleted)
                 .Select(o => new OrderViewModel
                 {
                     Status = o.Status,
                     CustomerFullName = $"{o.User.FirstName} {o.User.LastName}",
-                    ProductNames = o.ProductOrders
-                        .Where(p => p.OrderId == o.Id)
-                        .Select(p => p.Product.Name)
-                        .ToList(),
+                    Products = new List<ProductViewModel>
+                    {
+                        
+                    },
                     TotalPrice = o.ProductOrders
-                        .Where(p => p.OrderId == o.Id)
                         .Sum(p => p.Price)
                 })
                 .ToList();

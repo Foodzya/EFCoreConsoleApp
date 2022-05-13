@@ -44,9 +44,9 @@ namespace EcommerceStore.API.Controllers
         /// <response code="200">Returns when list of orders is successfully obtained</response>
         [HttpGet]
         [ProducesResponseType(typeof(List<OrderViewModel>), StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<OrderViewModel>>> GetAllAsync()
+        public async Task<ActionResult<List<OrderViewModel>>> GetAllAsync([FromQuery] int userId)
         {
-            var ordersViewModel = await _orderService.GetAllOrdersAsync();
+            var ordersViewModel = await _orderService.GetAllOrdersForUserAsync(userId);
 
             return Ok(ordersViewModel);
         }

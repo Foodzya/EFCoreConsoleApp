@@ -8,7 +8,7 @@ namespace EcommerceStore.Application.Models.ViewModels
         public int Id { get; set; }
         public string Status { get; set; }
         public string CustomerFullName { get; set; }
-        public List<string> ProductNames { get; set; }
+        public List<ProductViewModel> Products { get; set; }
         public double TotalPrice { get; set; }
     }
 }

@@ -93,7 +93,6 @@ namespace EcommerceStore.Application.Services
             address.PostCode = addressInputModel.PostCode;
             address.City = addressInputModel.City;
             address.StreetAddress = addressInputModel.StreetAddress;
-            address.UserId = addressInputModel.UserId;
 
             _addressRepository.Update(address);
 

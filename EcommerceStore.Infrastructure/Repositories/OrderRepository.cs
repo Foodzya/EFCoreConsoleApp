@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using EcommerceStore.Domain.Entities;
 using EcommerceStore.Domain.Interfaces;
@@ -27,6 +28,7 @@ namespace EcommerceStore.Infrastructure.Repositories
                 .Include(o => o.User)
                 .Include(o => o.ProductOrders)
                     .ThenInclude(p => p.Product)
+                .Where(o => !o.IsDeleted)
                 .ToListAsync();
 
             return orders;
@@ -38,6 +40,7 @@ namespace EcommerceStore.Infrastructure.Repositories
                 .Include(o => o.User)
                 .Include(o => o.ProductOrders)
                     .ThenInclude(p => p.Product)
+                .Where(o => !o.IsDeleted)
                 .FirstOrDefaultAsync(o => o.Id == orderId);
 
             return order;
