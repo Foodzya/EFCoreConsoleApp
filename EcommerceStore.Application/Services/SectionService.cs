@@ -46,11 +46,12 @@ namespace EcommerceStore.Application.Services
             var sectionsViewModel = sections
                 .Select(s => new SectionViewModel
                 {
+                    Id = s.Id,
                     Name = s.Name,
                     ProductCategories = s.ProductCategorySections
-                        .Where(p => p.ProductCategory.Id == p.ProductCategoryId)
                         .Select(p => new ProductCategoryViewModel
                         {
+                            Id = p.ProductCategoryId,
                             Name = p.ProductCategory.Name
                         })
                         .ToList()
@@ -71,7 +72,6 @@ namespace EcommerceStore.Application.Services
             {
                 Name = section.Name,
                 ProductCategories = section.ProductCategorySections
-                    .Where(p => p.ProductCategory.Id == p.ProductCategoryId)
                     .Select(p => new ProductCategoryViewModel
                     {
                         Name = p.ProductCategory.Name
@@ -89,7 +89,9 @@ namespace EcommerceStore.Application.Services
             if (section is null)
                 throw new ValidationException(NotFoundExceptionMessages.SectionNotFound, sectionId);
 
-            _sectionRepository.Remove(section);
+            section.IsDeleted = true;
+
+            _sectionRepository.Update(section);
 
             await _sectionRepository.SaveChangesAsync();
         }

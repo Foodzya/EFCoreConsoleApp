@@ -45,6 +45,7 @@ namespace EcommerceStore.Application.Services
             var productCategoriesViewModel = productCategories
                 .Select(p => new ProductCategoryViewModel
                 {
+                    Id = p.Id,
                     Name = p.Name,
                     Products = p.Products?
                         .Select(p => new ProductViewModel
@@ -55,7 +56,6 @@ namespace EcommerceStore.Application.Services
                             Description = p.Description,
                             Image = p.Image,
                             BrandName = p.Brand.Name,
-                            ProductCategoryName = p.ProductCategory.Name
                         })
                         .ToList()
                 })
@@ -73,6 +73,7 @@ namespace EcommerceStore.Application.Services
 
             var productCategoryViewModel = new ProductCategoryViewModel
             {
+                Id = productCategory.Id,
                 Name = productCategory.Name,
                 Products = productCategory.Products
                     .Select(p => new ProductViewModel
@@ -82,8 +83,7 @@ namespace EcommerceStore.Application.Services
                         Price = p.Price,
                         Description = p.Description,
                         Image = p.Image,
-                        BrandName = p.Brand.Name,
-                        ProductCategoryName = p.ProductCategory.Name
+                        BrandName = p.Brand.Name
                     })
                     .ToList()
             };

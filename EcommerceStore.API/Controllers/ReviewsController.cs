@@ -56,6 +56,7 @@ namespace EcommerceStore.API.Controllers
         /// </summary>
         /// <param name="reviewInputModel"></param>
         /// <returns></returns>
+        /// <remarks>
         /// Sample request:
         ///     POST 
         /// 
@@ -87,6 +88,7 @@ namespace EcommerceStore.API.Controllers
         /// <param name="reviewId"></param>
         /// <param name="reviewInputModel"></param>
         /// <returns></returns>
+        /// <remarks>
         /// Sample request:
         ///     PUT 
         /// 

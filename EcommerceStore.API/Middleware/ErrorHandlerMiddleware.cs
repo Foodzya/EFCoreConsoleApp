@@ -30,7 +30,7 @@ namespace EcommerceStore.API.Middleware
                 switch (error)
                 {
                     case ValidationException e:
-                        response.StatusCode = (int)HttpStatusCode.NotFound;
+                        response.StatusCode = (int)HttpStatusCode.BadRequest;
                         break;
                     default:
                         response.StatusCode = (int)HttpStatusCode.InternalServerError;

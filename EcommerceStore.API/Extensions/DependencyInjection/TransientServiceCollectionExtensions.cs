@@ -8,7 +8,7 @@ namespace EcommerceStore.API.Extensions.DependencyInjection
 {
     public static class TransientServiceCollectionExtensions
     {
-        public static IServiceCollection AddTransientDomainServices(this IServiceCollection services)
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddTransient<IBrandService, BrandService>();
             services.AddTransient<IProductService, ProductService>();
@@ -23,7 +23,7 @@ namespace EcommerceStore.API.Extensions.DependencyInjection
             return services;
         }
 
-        public static IServiceCollection AddTransientRepositories(this IServiceCollection services)
+        public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
             services.AddTransient<IBrandRepository, BrandRepository>();
             services.AddTransient<IProductRepository, ProductRepository>();

@@ -2,6 +2,7 @@
 {
     public class AddressViewModel
     {
+        public int Id { get; set; }
         public string StreetAddress { get; set; }
         public int PostCode { get; set; }
         public string City { get; set; }

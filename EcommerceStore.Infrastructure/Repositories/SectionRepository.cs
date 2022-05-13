@@ -26,6 +26,7 @@ namespace EcommerceStore.Infrastructure.Repositories
             var sections = await _context.Sections
                 .Include(s => s.ProductCategorySections)
                     .ThenInclude(p => p.ProductCategory)
+                .Where(s => !s.IsDeleted)
                 .ToListAsync();
 
             return sections;
@@ -36,6 +37,7 @@ namespace EcommerceStore.Infrastructure.Repositories
             var section = await _context.Sections
                 .Include(s => s.ProductCategorySections)
                     .ThenInclude(p => p.ProductCategory)
+                .Where(s => !s.IsDeleted)
                 .FirstOrDefaultAsync(s => s.Id == sectionId);
 
             return section;
@@ -46,6 +48,7 @@ namespace EcommerceStore.Infrastructure.Repositories
             var section = await _context.Sections
                 .Include(s => s.ProductCategorySections)
                     .ThenInclude(p => p.ProductCategory)
+                .Where(s => !s.IsDeleted)
                 .FirstOrDefaultAsync(s => s.Name == sectionName);
 
             return section;

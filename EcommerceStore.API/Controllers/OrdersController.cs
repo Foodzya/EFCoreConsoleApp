@@ -87,7 +87,7 @@ namespace EcommerceStore.API.Controllers
         /// <param name="orderId"></param>
         /// <param name="orderInputModel"></param>
         /// <returns></returns>
-        /// <remarsk>
+        /// <remarks>
         /// Sample request:
         ///     PUT 
         /// 

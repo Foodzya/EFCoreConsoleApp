@@ -27,9 +27,9 @@ namespace EcommerceStore.API
         {
             services.AddDbContext<EcommerceContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("EcommerceConnection")));
 
-            services.AddTransientDomainServices();
+            services.AddApplicationServices();
 
-            services.AddTransientRepositories();
+            services.AddRepositories();
 
             services.AddControllers()
                 .ConfigureApiBehaviorOptions(options =>
@@ -79,8 +79,6 @@ namespace EcommerceStore.API
                 opt.SwaggerEndpoint("/swagger/v1/swagger.json", "Ecommerce API");
                 opt.RoutePrefix = "api/docs";
             });
-
-            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         }
     }
 }

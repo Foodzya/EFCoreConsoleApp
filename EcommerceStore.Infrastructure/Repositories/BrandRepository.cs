@@ -26,6 +26,7 @@ namespace EcommerceStore.Infrastructure.Repositories
         {
             var brands = await _context.Brands
                 .Include(b => b.Products)
+                .Where(b => !b.IsDeleted)
                 .ToListAsync();
 
             return brands;

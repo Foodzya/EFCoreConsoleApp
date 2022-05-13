@@ -45,7 +45,6 @@ namespace EcommerceStore.Application.Services
                 throw new ValidationException(NotFoundExceptionMessages.BrandNotFound);
 
             var brandsViewModel = brands
-                .Where(b => !b.IsDeleted)
                 .Select(b => new BrandViewModel
                 {
                     Name = b.Name,
@@ -61,7 +60,7 @@ namespace EcommerceStore.Application.Services
         {
             var brand = await _brandRepository.GetByIdAsync(brandId);
 
-            if (brand is null || brand.IsDeleted)
+            if (brand is null)
                 throw new ValidationException(NotFoundExceptionMessages.BrandNotFound, brandId);
 
             var brandViewModel = new BrandViewModel
