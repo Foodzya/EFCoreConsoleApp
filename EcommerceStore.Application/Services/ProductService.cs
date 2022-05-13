@@ -81,6 +81,19 @@ namespace EcommerceStore.Application.Services
             return productViewModel;
         }
 
+        public async Task<bool> IsProductAvailableInStockAsync(int productId, decimal productQuantity)
+        {
+            var product = await _productRepository.GetByIdAsync(productId); 
+
+            if (product is null)
+                throw new ValidationException(NotFoundExceptionMessages.ProductNotFound, productId);
+
+            if (product.Quantity >= productQuantity)
+                return true;
+            else
+                return false; 
+        }
+
         public async Task RemoveProductByIdAsync(int productId)
         {
             var product = await _productRepository.GetByIdAsync(productId);

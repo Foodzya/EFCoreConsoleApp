@@ -133,5 +133,11 @@ namespace EcommerceStore.API.Controllers
 
             return Ok();
         }
+
+        [HttpGet("available/{productId}")]
+        public async Task<bool> IsAvailableInStockAsync([FromRoute] int productId, [FromQuery] decimal quantity)
+        {
+            return await _productService.IsProductAvailableInStockAsync(productId, quantity);
+        }
     }
 }
