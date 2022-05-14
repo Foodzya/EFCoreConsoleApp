@@ -22,13 +22,14 @@ namespace EcommerceStore.Infrastructure.Repositories
             await _context.Orders.AddAsync(order);
         }
 
-        public async Task<List<Order>> GetAllAsync()
+        public async Task<List<Order>> GetAllForUserAsync(int userId)
         {
             var orders = await _context.Orders
                 .Include(o => o.User)
                 .Include(o => o.ProductOrders)
                     .ThenInclude(p => p.Product)
-                .Where(o => !o.IsDeleted)
+                        .ThenInclude(p => p.Brand)
+                .Where(o => !o.IsDeleted && o.UserId == userId)
                 .ToListAsync();
 
             return orders;
@@ -40,6 +41,7 @@ namespace EcommerceStore.Infrastructure.Repositories
                 .Include(o => o.User)
                 .Include(o => o.ProductOrders)
                     .ThenInclude(p => p.Product)
+                        .ThenInclude(p => p.Brand)
                 .Where(o => !o.IsDeleted)
                 .FirstOrDefaultAsync(o => o.Id == orderId);
 
@@ -49,6 +51,13 @@ namespace EcommerceStore.Infrastructure.Repositories
         public void Remove(Order order)
         {
             _context.Orders.Remove(order);
+        }
+
+        public async Task RemoveProductFromOrderAsync(int orderId, int productId)
+        {
+            var productorder = await _context.ProductOrders.FirstOrDefaultAsync(p => p.OrderId == orderId && p.ProductId == productId);
+
+            _context.ProductOrders.Remove(productorder);
         }
 
         public async Task SaveChangesAsync()

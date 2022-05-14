@@ -1,4 +1,5 @@
-﻿using EcommerceStore.Application.Interfaces;
+﻿using EcommerceStore.Application.Exceptions;
+using EcommerceStore.Application.Interfaces;
 using EcommerceStore.Application.Models.InputModels;
 using EcommerceStore.Application.Models.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -38,8 +39,9 @@ namespace EcommerceStore.API.Controllers
         }
 
         /// <summary>
-        /// Get list of orders
+        /// Get list of orders for specified user
         /// </summary>
+        /// <param name="userId"></param>
         /// <returns></returns>
         /// <response code="200">Returns when list of orders is successfully obtained</response>
         [HttpGet]
@@ -55,6 +57,7 @@ namespace EcommerceStore.API.Controllers
         /// Creates an order
         /// </summary>
         /// <param name="orderInputModel"></param>
+        /// <param name="userId"></param>
         /// <returns></returns>
         /// <remarks>
         /// Sample request:
@@ -71,12 +74,12 @@ namespace EcommerceStore.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> CreateAsync([FromBody] OrderInputModel orderInputModel)
+        public async Task<ActionResult> CreateAsync([FromQuery] int userId, [FromBody] OrderInputModel orderInputModel)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            await _orderService.CreateOrderAsync(orderInputModel);
+            await _orderService.CreateOrderAsync(userId, orderInputModel);
 
             return Ok();
         }
@@ -113,16 +116,48 @@ namespace EcommerceStore.API.Controllers
         }
 
         /// <summary>
-        /// Deletes an existing order
+        /// Canceles an order
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns></returns>
-        /// <response code="200">Returns when order is successfully deleted</response>
+        /// <response code="200">Returns when order is successfully canceled</response>
         [HttpDelete("{orderId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult> RemoveAsync([FromRoute] int orderId)
+        public async Task<ActionResult> CancelAsync([FromRoute] int orderId)
         {
-            await _orderService.RemoveOrderAsync(orderId);
+            await _orderService.CancelOrderAsync(orderId);
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Add new product to existing order
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="orderInputModel"></param>
+        /// <returns></returns>
+        /// <exception cref="ValidationException"></exception>
+        [HttpPost("{orderId}/products")]
+        public async Task<ActionResult> AddProductAsync([FromRoute] int orderId, [FromBody] OrderInputModel orderInputModel)
+        {
+            if (!ModelState.IsValid)
+                throw new ValidationException(ModelState);
+
+            await _orderService.AddProductsToOrderAsync(orderId, orderInputModel);
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Remove product(-s) from existing order
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        [HttpDelete("{orderId}")]
+        public async Task<ActionResult> RemoveProductsAsync([FromRoute] int orderId, [FromQuery] int productId)
+        {
+            await _orderService.RemoveProductFromOrderAsync(orderId, productId);
 
             return Ok();
         }
