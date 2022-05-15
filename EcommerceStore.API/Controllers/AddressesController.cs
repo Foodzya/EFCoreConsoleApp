@@ -1,4 +1,5 @@
-﻿using EcommerceStore.Application.Interfaces;
+﻿using EcommerceStore.Application.Exceptions;
+using EcommerceStore.Application.Interfaces;
 using EcommerceStore.Application.Models.InputModels;
 using EcommerceStore.Application.Models.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -40,13 +41,14 @@ namespace EcommerceStore.API.Controllers
         /// <summary>
         /// Get all existing addresses
         /// </summary>
+        /// <param name="userId"></param>
         /// <returns></returns>
         /// <response code="200">When list of addresses is successfully obtained</response>
-        [HttpGet]
+        [HttpGet("users/{userId}")]
         [ProducesResponseType(typeof(List<AddressViewModel>), StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<AddressViewModel>>> GetAllAsync()
+        public async Task<ActionResult<List<AddressViewModel>>> GetAllAsync([FromRoute] int userId)
         {
-            var addressesViewModel = await _addressService.GetAllAddressesAsync();
+            var addressesViewModel = await _addressService.GetAllAddressesForUserAsync(userId);
 
             return Ok(addressesViewModel);
         }
@@ -69,6 +71,7 @@ namespace EcommerceStore.API.Controllers
         /// <summary>
         /// Creates an address
         /// </summary>
+        /// <param name="userId"></param>
         /// <param name="addressInputModel"></param>
         /// <returns></returns>
         /// <remarks>
@@ -79,20 +82,19 @@ namespace EcommerceStore.API.Controllers
         ///         "streetAddress": "some address details",
         ///         "postcode": 123456,
         ///         "city": "some city",
-        ///         "userId": 1
         ///     }
         /// </remarks>
         /// <response code="200">Returns when address is successfully created</response>
         /// <response code="400">If the address is null</response>
-        [HttpPost]
+        [HttpPost("users/{userId}")]
         [ProducesResponseType(typeof(AddressViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> CreateAsync([FromBody] AddressInputModel addressInputModel)
+        public async Task<ActionResult> CreateAsync([FromRoute] int userId, [FromBody] AddressInputModel addressInputModel)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                throw new ValidationException(ModelState);
 
-            await _addressService.CreateAddressAsync(addressInputModel);
+            await _addressService.CreateAddressAsync(userId, addressInputModel);
 
             return Ok();
         }
@@ -122,7 +124,7 @@ namespace EcommerceStore.API.Controllers
         public async Task<ActionResult> UpdateAsync([FromRoute] int addressId, [FromBody] AddressInputModel addressInputModel)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                throw new ValidationException(ModelState);
 
             await _addressService.UpdateAddressAsync(addressId, addressInputModel);
 

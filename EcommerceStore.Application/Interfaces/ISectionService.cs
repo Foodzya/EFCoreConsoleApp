@@ -9,7 +9,7 @@ namespace EcommerceStore.Application.Interfaces
     {
         public Task<List<SectionViewModel>> GetAllSectionsAsync();
         public Task<SectionViewModel> GetSectionByIdAsync(int sectionId);
-        public Task UpdateSectionAsync(int sectionId, SectionInputModel sectionInputModel);
+        public Task RenameSectionAsync(int sectionId, SectionInputModel sectionInputModel);
         public Task RemoveSectionAsync(int sectionId);
         public Task CreateSectionAsync(SectionInputModel sectionInputModel);
     }

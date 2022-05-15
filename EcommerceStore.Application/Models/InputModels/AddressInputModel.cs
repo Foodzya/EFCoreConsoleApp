@@ -12,7 +12,5 @@ namespace EcommerceStore.Application.Models.InputModels
         [Required]
         [StringLength(300, MinimumLength = 1, ErrorMessage = "City name must be between 1 and 300 characters")]
         public string City { get; set; }
-        [Required]
-        public int UserId { get; set; }
     }
 }

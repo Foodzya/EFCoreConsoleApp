@@ -21,10 +21,11 @@ namespace EcommerceStore.Infrastructure.Repositories
             await _context.Addresses.AddAsync(address);
         }
 
-        public async Task<List<Address>> GetAllAsync()
+        public async Task<List<Address>> GetAllForUserAsync(int userId)
         {
             return await _context.Addresses
                 .Include(a => a.User)
+                .Where(a => a.UserId == userId)
                 .ToListAsync();
         }
 
@@ -32,7 +33,7 @@ namespace EcommerceStore.Infrastructure.Repositories
         {
             return await _context.Addresses
                 .Include(a => a.User)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(a => a.Id == addressId);
         }
 
         public void Remove(Address address)

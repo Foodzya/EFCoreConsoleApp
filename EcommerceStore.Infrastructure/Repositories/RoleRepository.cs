@@ -23,17 +23,23 @@ namespace EcommerceStore.Infrastructure.Repositories
 
         public async Task<List<Role>> GetAllAsync()
         {
-            return await _context.Roles.ToListAsync();
+            return await _context.Roles
+                .Where(r => !r.IsDeleted)
+                .ToListAsync();
         }
 
         public async Task<Role> GetByIdAsync(int roleId)
         {
-            return await _context.Roles.FirstOrDefaultAsync(r => r.Id == roleId);
+            return await _context.Roles
+                .Where(r => !r.IsDeleted)
+                .FirstOrDefaultAsync(r => r.Id == roleId);
         }
 
         public async Task<Role> GetByNameAsync(string roleName)
         {
-            return await _context.Roles.FirstOrDefaultAsync(r => r.Name == roleName);
+            return await _context.Roles
+                .Where(r => !r.IsDeleted)
+                .FirstOrDefaultAsync(r => r.Name == roleName);
         }
 
         public void Remove(Role role)

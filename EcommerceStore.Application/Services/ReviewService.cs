@@ -44,6 +44,7 @@ namespace EcommerceStore.Application.Services
             var reviewsViewModel = reviews
                 .Select(r => new ReviewViewModel
                 {
+                    Id = r.Id,
                     Comment = r.Comment,
                     Rating = r.Rating,
                     ProductName = r.Product.Name,
@@ -63,6 +64,7 @@ namespace EcommerceStore.Application.Services
 
             var reviewViewModel = new ReviewViewModel
             {
+                Id = review.Id,
                 Comment = review.Comment,
                 Rating = review.Rating,
                 ProductName = review.Product.Name,

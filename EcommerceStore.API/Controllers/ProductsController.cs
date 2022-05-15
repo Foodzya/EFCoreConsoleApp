@@ -1,4 +1,5 @@
-﻿using EcommerceStore.Application.Interfaces;
+﻿using EcommerceStore.Application.Exceptions;
+using EcommerceStore.Application.Interfaces;
 using EcommerceStore.Application.Models.InputModels;
 using EcommerceStore.Application.Models.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -78,7 +79,7 @@ namespace EcommerceStore.API.Controllers
         public async Task<ActionResult> UpdateAsync([FromRoute] int productId, [FromBody] ProductInputModel productIm)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                throw new ValidationException(ModelState);
 
             await _productService.UpdateProductAsync(productId, productIm);
 
@@ -112,7 +113,7 @@ namespace EcommerceStore.API.Controllers
         public async Task<ActionResult> CreateAsync([FromBody] ProductInputModel productIm)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                throw new ValidationException(ModelState);
 
             await _productService.CreateProductAsync(productIm);
 

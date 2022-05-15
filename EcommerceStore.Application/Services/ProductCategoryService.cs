@@ -32,12 +32,18 @@ namespace EcommerceStore.Application.Services
                 ParentCategoryId = productCategoryInputModel.ParentCategoryId
             };
 
+            productCategory.ProductCategorySections.Add(new ProductCategorySection
+            {
+                ProductCategoryId = (int)productCategoryInputModel.ParentCategoryId,
+                SectionId = productCategoryInputModel.SectionId
+            });
+
             await _productCategoryRepository.CreateAsync(productCategory);
         }
 
-        public async Task<List<ProductCategoryViewModel>> GetAllProductCategoriesAsync()
+        public async Task<List<ProductCategoryViewModel>> GetAllProductCategoriesForSectionAsync(int sectionId)
         {
-            var productCategories = await _productCategoryRepository.GetAllAsync();
+            var productCategories = await _productCategoryRepository.GetAllAsync(sectionId);
 
             if (productCategories is null)
                 throw new ValidationException(NotFoundExceptionMessages.ProductCategoryNotFound);
@@ -50,6 +56,7 @@ namespace EcommerceStore.Application.Services
                     Products = p.Products?
                         .Select(p => new ProductViewModel
                         {
+                            Id = p.Id,
                             Name = p.Name,
                             Quantity = p.Quantity,
                             Price = p.Price,
@@ -57,7 +64,7 @@ namespace EcommerceStore.Application.Services
                             Image = p.Image,
                             BrandName = p.Brand.Name,
                         })
-                        .ToList()
+                        .ToList(),
                 })
                 .ToList();
 
@@ -78,6 +85,7 @@ namespace EcommerceStore.Application.Services
                 Products = productCategory.Products
                     .Select(p => new ProductViewModel
                     {
+                        Id = p.Id,
                         Name = p.Name,
                         Quantity = p.Quantity,
                         Price = p.Price,

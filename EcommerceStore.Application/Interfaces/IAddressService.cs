@@ -7,10 +7,10 @@ namespace EcommerceStore.Application.Interfaces
 {
     public interface IAddressService
     {
-        public Task<List<AddressViewModel>> GetAllAddressesAsync();
+        public Task<List<AddressViewModel>> GetAllAddressesForUserAsync(int userId);
         public Task<AddressViewModel> GetAddressByIdAsync(int addressId);
         public Task RemoveAddressByIdAsync(int addressId);
-        public Task CreateAddressAsync(AddressInputModel addressInputModel);
+        public Task CreateAddressAsync(int userId, AddressInputModel addressInputModel);
         public Task UpdateAddressAsync(int addressId, AddressInputModel addressInputModel);
     }
 }

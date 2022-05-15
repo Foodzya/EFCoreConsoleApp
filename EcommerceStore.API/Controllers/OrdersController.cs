@@ -54,7 +54,7 @@ namespace EcommerceStore.API.Controllers
         }
 
         /// <summary>
-        /// Creates an order
+        /// Creates an order with number of products
         /// </summary>
         /// <param name="orderInputModel"></param>
         /// <param name="userId"></param>
@@ -63,11 +63,17 @@ namespace EcommerceStore.API.Controllers
         /// Sample request:
         ///     POST 
         /// 
-        ///     {
-        ///         "modifiedDate": "2022-05-12T15:30:00",
-        ///         "status": "In Review",
-        ///         "userId": 1
-        ///     }
+        ///     "ProductsDetails":
+        ///     [
+        ///         {
+        ///             "ProductId": 2,
+        ///             "ProductAmount": 1
+        ///         },
+        ///         {
+        ///             "ProductId": 1,
+        ///             "ProductAmount": 3
+        ///         }
+        ///     ]
         /// </remarks>
         /// <response code="200">Returns when order is successfully created</response>
         /// <response code="400">Returns when order input details are incorrect</response>
@@ -77,7 +83,7 @@ namespace EcommerceStore.API.Controllers
         public async Task<ActionResult> CreateAsync([FromQuery] int userId, [FromBody] OrderInputModel orderInputModel)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                throw new ValidationException(ModelState);
 
             await _orderService.CreateOrderAsync(userId, orderInputModel);
 
@@ -88,29 +94,18 @@ namespace EcommerceStore.API.Controllers
         /// Updates an existing order
         /// </summary>
         /// <param name="orderId"></param>
-        /// <param name="orderInputModel"></param>
         /// <returns></returns>
-        /// <remarks>
-        /// Sample request:
-        ///     PUT 
-        /// 
-        ///     {
-        ///         "modifiedDate": "2022-05-12T15:30:00",
-        ///         "status": "In Review",
-        ///         "userId": 1
-        ///     }
-        /// </remarks>
         /// <response code="200">Returns when order is successfully updated</response>
         /// <response code="400">Returns when order input details are incorrect</response>        
         [HttpPut("{orderId}")]
         [ProducesResponseType(typeof(OrderViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> UpdateAsync([FromRoute] int orderId, [FromBody] OrderInputModel orderInputModel)
+        public async Task<ActionResult> UpdateStatusAsync([FromRoute] int orderId)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                throw new ValidationException(ModelState);
 
-            await _orderService.UpdateOrderAsync(orderId, orderInputModel);
+            await _orderService.UpdateOrderAsync(orderId);
 
             return Ok();
         }
@@ -137,6 +132,8 @@ namespace EcommerceStore.API.Controllers
         /// <param name="orderInputModel"></param>
         /// <returns></returns>
         /// <exception cref="ValidationException"></exception>
+        /// <response code="200">Returns when product is successfully added to order</response>
+        /// <response code="400">Returns when failed during adding product to order</response>
         [HttpPost("{orderId}/products")]
         public async Task<ActionResult> AddProductAsync([FromRoute] int orderId, [FromBody] OrderInputModel orderInputModel)
         {

@@ -153,7 +153,7 @@ namespace EcommerceStore.Application.Services
             throw new NotImplementedException();
         }
 
-        public async Task UpdateOrderAsync(int orderId, OrderInputModel orderInputModel)
+        public async Task UpdateOrderAsync(int orderId)
         {
             var order = await _orderRepository.GetByIdAsync(orderId);
 
@@ -164,12 +164,17 @@ namespace EcommerceStore.Application.Services
 
             switch (order.Status)
             {
+                case "Created":
+                    order.Status = "In Review";
+                    break;
                 case "In Review":
                     order.Status = "In Delivery";
                     break;
                 case "In Delivery":
                     order.Status = "Completed";
                     break;
+                default:
+                    throw new Exception($"Order {orderId} failed");
             }
 
             _orderRepository.Update(order);

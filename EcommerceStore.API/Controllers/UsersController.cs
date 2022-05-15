@@ -57,6 +57,7 @@ namespace EcommerceStore.API.Controllers
         /// </summary>
         /// <param name="userInputModel"></param>
         /// <returns></returns>
+        /// <response code="200">Returns when user is successfully created</response>
         [HttpPost]
         public async Task<ActionResult> CreateAsync([FromBody] UserInputModel userInputModel)
         {
@@ -73,7 +74,11 @@ namespace EcommerceStore.API.Controllers
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
+        /// <response code="200">Returns when user is successfully deleted</response>
+        /// <response code="400">Returns when failed during user deleting</response>
         [HttpDelete("{userId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> RemoveAsync([FromRoute] int userId)
         {
             await _userService.RemoveUserByIdAsync(userId);
@@ -87,7 +92,11 @@ namespace EcommerceStore.API.Controllers
         /// <param name="userId"></param>
         /// <param name="userInputModel"></param>
         /// <returns></returns>
+        /// <response code="200">Returns when user is successfully updated</response>
+        /// <response code="400">Returns when failed during user updating</response>
         [HttpPut("{userId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> UpdateAsync([FromRoute] int userId, [FromBody] UserInputModel userInputModel)
         {
             if (!ModelState.IsValid)

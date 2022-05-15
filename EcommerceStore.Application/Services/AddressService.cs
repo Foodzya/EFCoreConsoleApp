@@ -19,14 +19,14 @@ namespace EcommerceStore.Application.Services
             _addressRepository = addressRepository;
         }
 
-        public async Task CreateAddressAsync(AddressInputModel addressInputModel)
+        public async Task CreateAddressAsync(int userId, AddressInputModel addressInputModel)
         {
             var address = new Address
             {
                 StreetAddress = addressInputModel.StreetAddress,
                 City = addressInputModel.City,
                 PostCode = addressInputModel.PostCode,
-                UserId = addressInputModel.UserId
+                UserId = userId
             };
 
             await _addressRepository.CreateAsync(address);
@@ -43,6 +43,7 @@ namespace EcommerceStore.Application.Services
 
             var addressViewModel = new AddressViewModel
             {
+                Id = address.Id,
                 City = address.City,
                 PostCode = address.PostCode,
                 StreetAddress = address.StreetAddress,
@@ -51,9 +52,9 @@ namespace EcommerceStore.Application.Services
 
             return addressViewModel;
         }
-        public async Task<List<AddressViewModel>> GetAllAddressesAsync()
+        public async Task<List<AddressViewModel>> GetAllAddressesForUserAsync(int userId)
         {
-            var addresses = await _addressRepository.GetAllAsync();
+            var addresses = await _addressRepository.GetAllForUserAsync(userId);
 
             if (addresses is null)
                 throw new ValidationException(NotFoundExceptionMessages.AddressNotFound);
@@ -61,6 +62,7 @@ namespace EcommerceStore.Application.Services
             var addressesViewModel = addresses
                 .Select(a => new AddressViewModel
                 {
+                    Id = a.Id,
                     City = a.City,
                     PostCode = a.PostCode,
                     StreetAddress = a.StreetAddress,

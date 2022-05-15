@@ -23,7 +23,7 @@ namespace EcommerceStore.Application.Services
         {
             var existingBrand = await _brandRepository.GetByNameAsync(brandIm.Name);
 
-            if (existingBrand.Name != null)
+            if (existingBrand != null)
                 throw new ValidationException(AlreadyExistExceptionMessages.BrandAlreadyExists, existingBrand.Id);
 
             var brand = new Brand
@@ -47,6 +47,7 @@ namespace EcommerceStore.Application.Services
             var brandsViewModel = brands
                 .Select(b => new BrandViewModel
                 {
+                    Id = b.Id,
                     Name = b.Name,
                     FoundationYear = b.FoundationYear,
                     ProductsCount = b.Products.Count()
@@ -65,6 +66,7 @@ namespace EcommerceStore.Application.Services
 
             var brandViewModel = new BrandViewModel
             {
+                Id = brand.Id,
                 Name = brand.Name,
                 FoundationYear = brand.FoundationYear,
                 ProductsCount = brand.Products.Count()

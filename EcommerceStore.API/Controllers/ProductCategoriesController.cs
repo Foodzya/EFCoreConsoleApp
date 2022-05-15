@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using EcommerceStore.Application.Exceptions;
 using EcommerceStore.Application.Interfaces;
 using EcommerceStore.Application.Models.InputModels;
 using EcommerceStore.Application.Models.ViewModels;
@@ -25,13 +26,14 @@ namespace EcommerceStore.API.Controllers
         /// <summary>
         /// Get list of product categories
         /// </summary>
+        /// <param name="sectionId"></param>
         /// <returns></returns>
         /// <response code="200">Returns when list of product categories is successfully obtained</response>
         [HttpGet]
         [ProducesResponseType(typeof(List<ProductCategoryViewModel>), StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<ProductCategoryViewModel>>> GetAllAsync()
+        public async Task<ActionResult<List<ProductCategoryViewModel>>> GetAllAsync([FromQuery] int sectionId)
         {
-            var productCategoriesViewModel = await _productCategoryService.GetAllProductCategoriesAsync();
+            var productCategoriesViewModel = await _productCategoryService.GetAllProductCategoriesForSectionAsync(sectionId);
 
             return Ok(productCategoriesViewModel);
         }
@@ -74,7 +76,7 @@ namespace EcommerceStore.API.Controllers
         public async Task<ActionResult> UpdateAsync([FromRoute] int productCategoryId, [FromBody] ProductCategoryInputModel productCategoryIm)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                throw new ValidationException(ModelState);
 
             await _productCategoryService.UpdateProductCategoryAsync(productCategoryId, productCategoryIm);
 
@@ -92,7 +94,8 @@ namespace EcommerceStore.API.Controllers
         /// 
         ///     {
         ///         "name": "Sneakers",
-        ///         "parentCategoryId": 1
+        ///         "parentCategoryId": 1,
+        ///         "sectionId": 1
         ///     }
         /// </remarks>
         /// <response code="200">Returns when order is successfully created</response>
@@ -103,7 +106,7 @@ namespace EcommerceStore.API.Controllers
         public async Task<ActionResult> CreateAsync([FromBody] ProductCategoryInputModel productCategoryIm)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                throw new ValidationException(ModelState);
 
             await _productCategoryService.CreateProductCategoryAsync(productCategoryIm);
 

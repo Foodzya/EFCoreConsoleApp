@@ -49,6 +49,7 @@ namespace EcommerceStore.Application.Services
             var productsViewModel = products
                 .Select(p => new ProductViewModel
                 {
+                    Id = p.Id,
                     Name = p.Name,
                     Price = p.Price,
                     Quantity = p.Quantity,
@@ -70,6 +71,7 @@ namespace EcommerceStore.Application.Services
 
             var productViewModel = new ProductViewModel
             {
+                Id = product.Id,
                 Name = product.Name,
                 Description = product.Description,
                 Image = product.Image,

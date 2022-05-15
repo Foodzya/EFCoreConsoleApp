@@ -74,6 +74,7 @@ namespace EcommerceStore.Application.Services
                 ProductCategories = section.ProductCategorySections
                     .Select(p => new ProductCategoryViewModel
                     {
+                        Id = p.ProductCategoryId,
                         Name = p.ProductCategory.Name
                     })
                     .ToList()
@@ -96,7 +97,7 @@ namespace EcommerceStore.Application.Services
             await _sectionRepository.SaveChangesAsync();
         }
 
-        public async Task UpdateSectionAsync(int sectionId, SectionInputModel sectionInputModel)
+        public async Task RenameSectionAsync(int sectionId, SectionInputModel sectionInputModel)
         {
             var existingSection = await _sectionRepository.GetByNameAsync(sectionInputModel.Name);
 

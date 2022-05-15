@@ -21,11 +21,12 @@ namespace EcommerceStore.Infrastructure.Repositories
             await _context.ProductCategories.AddAsync(productCategory);
         }
 
-        public async Task<List<ProductCategory>> GetAllAsync()
+        public async Task<List<ProductCategory>> GetAllAsync(int sectionId)
         {
             var productCategories = await _context.ProductCategories
                 .Include(p => p.Products)
                     .ThenInclude(p => p.Brand)
+                .Where(p => p.ProductCategorySections.Any(p => p.SectionId == sectionId))
                 .ToListAsync();
 
             return productCategories;

@@ -1,4 +1,5 @@
-﻿using EcommerceStore.Application.Interfaces;
+﻿using EcommerceStore.Application.Exceptions;
+using EcommerceStore.Application.Interfaces;
 using EcommerceStore.Application.Models.InputModels;
 using EcommerceStore.Application.Models.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -87,7 +88,7 @@ namespace EcommerceStore.API.Controllers
         public async Task<ActionResult> CreateAsync([FromBody] RoleInputModel roleInputModel)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                throw new ValidationException(ModelState);
 
             await _roleService.CreateRoleAsync(roleInputModel);
 
@@ -116,7 +117,7 @@ namespace EcommerceStore.API.Controllers
         public async Task<ActionResult> UpdateAsync([FromRoute] int roleId, [FromBody] RoleInputModel roleInputModel)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                throw new ValidationException(ModelState);
 
             await _roleService.UpdateRoleAsync(roleId, roleInputModel);
 

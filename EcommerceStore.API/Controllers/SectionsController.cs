@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using EcommerceStore.Application.Exceptions;
 using EcommerceStore.Application.Interfaces;
 using EcommerceStore.Application.Models.InputModels;
 using EcommerceStore.Application.Models.ViewModels;
@@ -72,7 +73,7 @@ namespace EcommerceStore.API.Controllers
         public async Task<ActionResult> CreateAsync([FromBody] SectionInputModel sectionInputModel)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                throw new ValidationException(ModelState);
 
             await _sectionService.CreateSectionAsync(sectionInputModel);
 
@@ -93,17 +94,17 @@ namespace EcommerceStore.API.Controllers
         ///         "name": "Kids new"
         ///     }
         /// </remarks>
-        /// <response code="200">Returns when section is successfully updated</response>
-        /// <response code="400">Returns when section input details are incorrect</response>
+        /// <response code="200">Returns when section is successfully renamed</response>
+        /// <response code="400">Returns when section input name is incorrect</response>
         [HttpPut("{sectionId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> UpdateAsync([FromRoute] int sectionId, SectionInputModel sectionInputModel)
+        public async Task<ActionResult> RenameAsync([FromRoute] int sectionId, SectionInputModel sectionInputModel)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                throw new ValidationException(ModelState);
 
-            await _sectionService.UpdateSectionAsync(sectionId, sectionInputModel);
+            await _sectionService.RenameSectionAsync(sectionId, sectionInputModel);
 
             return Ok();
         }

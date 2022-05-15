@@ -50,6 +50,7 @@ namespace EcommerceStore.Application.Services
             var usersViewModel = users
                 .Select(u => new UserViewModel
                 {
+                    Id = u.Id,
                     FirstName = u.FirstName,
                     LastName = u.LastName,
                     Email = u.Email,
@@ -70,6 +71,7 @@ namespace EcommerceStore.Application.Services
 
             var userViewModel = new UserViewModel
             {
+                Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,

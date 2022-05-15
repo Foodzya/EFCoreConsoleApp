@@ -27,9 +27,9 @@ namespace EcommerceStore.Application.Services
                 throw new ValidationException(NotFoundExceptionMessages.RoleNotFound);
 
             var rolesViewModel = roles
-                .Where(r => !r.IsDeleted)
                 .Select(r => new RoleViewModel
                 {
+                    Id = r.Id,
                     Name = r.Name
                 })
                 .ToList();
@@ -41,11 +41,12 @@ namespace EcommerceStore.Application.Services
         {
             var role = await _roleRepository.GetByIdAsync(roleId);
 
-            if (role is null || role.IsDeleted)
+            if (role is null)
                 throw new ValidationException(NotFoundExceptionMessages.RoleNotFound, roleId);
 
             var roleViewModel = new RoleViewModel
             {
+                Id = role.Id,
                 Name = role.Name
             };
 
@@ -56,7 +57,7 @@ namespace EcommerceStore.Application.Services
         {
             var role = await _roleRepository.GetByIdAsync(roleId);
 
-            if (role is null || role.IsDeleted)
+            if (role is null)
                 throw new ValidationException(NotFoundExceptionMessages.RoleNotFound, roleId);
 
             role.IsDeleted = true;
