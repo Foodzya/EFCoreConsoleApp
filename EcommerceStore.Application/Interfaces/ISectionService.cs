@@ -12,5 +12,6 @@ namespace EcommerceStore.Application.Interfaces
         public Task RenameSectionAsync(int sectionId, SectionInputModel sectionInputModel);
         public Task RemoveSectionAsync(int sectionId);
         public Task CreateSectionAsync(SectionInputModel sectionInputModel);
+        public Task LinkCategoryToSectionAsync(ProductCategoryInputModel productCategoryInputModel);
     }
 }

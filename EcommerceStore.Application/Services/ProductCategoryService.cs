@@ -13,10 +13,12 @@ namespace EcommerceStore.Application.Services
     public class ProductCategoryService : IProductCategoryService
     {
         private readonly IProductCategoryRepository _productCategoryRepository;
+        private readonly ISectionService _sectionService;
 
-        public ProductCategoryService(IProductCategoryRepository productCategoryRepository)
+        public ProductCategoryService(IProductCategoryRepository productCategoryRepository, ISectionService sectionService)
         {
             _productCategoryRepository = productCategoryRepository;
+            _sectionService = sectionService;
         }
 
         public async Task CreateProductCategoryAsync(ProductCategoryInputModel productCategoryInputModel)
@@ -32,18 +34,16 @@ namespace EcommerceStore.Application.Services
                 ParentCategoryId = productCategoryInputModel.ParentCategoryId
             };
 
-            productCategory.ProductCategorySections.Add(new ProductCategorySection
-            {
-                ProductCategoryId = (int)productCategoryInputModel.ParentCategoryId,
-                SectionId = productCategoryInputModel.SectionId
-            });
+            await _sectionService.LinkCategoryToSectionAsync(productCategoryInputModel);
 
             await _productCategoryRepository.CreateAsync(productCategory);
+
+            await _productCategoryRepository.SaveChangesAsync();
         }
 
         public async Task<List<ProductCategoryViewModel>> GetAllProductCategoriesForSectionAsync(int sectionId)
         {
-            var productCategories = await _productCategoryRepository.GetAllAsync(sectionId);
+            var productCategories = await _productCategoryRepository.GetAllForSectionAsync(sectionId);
 
             if (productCategories is null)
                 throw new ValidationException(NotFoundExceptionMessages.ProductCategoryNotFound);
@@ -99,6 +99,22 @@ namespace EcommerceStore.Application.Services
             return productCategoryViewModel;
         }
 
+        public async Task LinkSubcategoryToParentCategoryAsync(int parentCategoryId, int subcategoryId)
+        {
+            var parentCategory = await _productCategoryRepository.GetByIdAsync(parentCategoryId);
+
+            var subcategory = await _productCategoryRepository.GetByIdAsync(subcategoryId);
+
+            if (parentCategory is null || subcategory is null)
+                throw new ValidationException(NotFoundExceptionMessages.ProductCategoryNotFound);
+
+            subcategory.ParentCategoryId = parentCategory.Id;
+
+            _productCategoryRepository.Update(subcategory);
+
+            await _productCategoryRepository.SaveChangesAsync();
+        }
+
         public async Task RemoveProductCategoryAsync(int productCategoryId)
         {
             var productCategory = await _productCategoryRepository.GetByIdAsync(productCategoryId);
@@ -106,7 +122,9 @@ namespace EcommerceStore.Application.Services
             if (productCategory is null)
                 throw new ValidationException(NotFoundExceptionMessages.ProductCategoryNotFound, productCategoryId);
 
-            _productCategoryRepository.Remove(productCategory);
+            productCategory.IsDeleted = true;
+
+            _productCategoryRepository.Update(productCategory);
 
             await _productCategoryRepository.SaveChangesAsync();
         }

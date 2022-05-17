@@ -13,10 +13,12 @@ namespace EcommerceStore.Application.Services
     public class SectionService : ISectionService
     {
         private readonly ISectionRepository _sectionRepository;
+        private readonly IProductCategoryRepository _productCategoryRepository;
 
-        public SectionService(ISectionRepository sectionRepository)
+        public SectionService(ISectionRepository sectionRepository, IProductCategoryRepository productCategoryRepository)
         {
             _sectionRepository = sectionRepository;
+            _productCategoryRepository = productCategoryRepository;
         }
 
         public async Task CreateSectionAsync(SectionInputModel sectionInputModel)
@@ -81,6 +83,36 @@ namespace EcommerceStore.Application.Services
             };
 
             return sectionViewModel;
+        }
+
+        public async Task LinkCategoryToSectionAsync(ProductCategoryInputModel productcategoryIm)
+        {
+            var section = await _sectionRepository.GetByIdAsync(productcategoryIm.SectionId);
+
+            if (section is null)
+                throw new ValidationException(NotFoundExceptionMessages.SectionNotFound, productcategoryIm.SectionId);
+
+            var parentProductCategory = await _productCategoryRepository.GetByIdAsync((int)productcategoryIm.ParentCategoryId);
+
+            if (parentProductCategory != null)
+            {
+                var parentProductCategorySectionIds = section.ProductCategorySections
+                    .Select(s => s.SectionId)
+                    .ToList();
+
+                if (!parentProductCategorySectionIds.Contains(productcategoryIm.SectionId))
+                    throw new ValidationException(ExceptionMessages.LinkCategoryToSectionFailed);
+            }
+
+            section.ProductCategorySections.Add(new ProductCategorySection
+            {
+                ProductCategoryId = (int)productcategoryIm.ParentCategoryId,
+                SectionId = productcategoryIm.SectionId
+            });
+
+            _sectionRepository.Update(section);
+
+           await _sectionRepository.SaveChangesAsync();
         }
 
         public async Task RemoveSectionAsync(int sectionId)

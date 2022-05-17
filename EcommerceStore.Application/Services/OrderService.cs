@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EcommerceStore.Application.Enums;
 using EcommerceStore.Application.Exceptions;
 using EcommerceStore.Application.Interfaces;
 using EcommerceStore.Application.Models.InputModels;
@@ -15,11 +16,13 @@ namespace EcommerceStore.Application.Services
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IProductRepository _productRepository;
+        private readonly IProductService _productService;
 
-        public OrderService(IOrderRepository orderRepository, IProductRepository productRepository)
+        public OrderService(IOrderRepository orderRepository, IProductRepository productRepository, IProductService productService)
         {
             _orderRepository = orderRepository;
             _productRepository = productRepository;
+            _productService = productService;
         }
 
         public async Task CreateOrderAsync(int userId, OrderInputModel orderInputModel)
@@ -28,7 +31,7 @@ namespace EcommerceStore.Application.Services
             var order = new Order
             {
                 ModifiedDate = DateTime.UtcNow,
-                Status = "Created",
+                Status = OrderStatusEnum.StatusesEnum.Created.ToString(),
                 UserId = userId,
                 ProductOrders = new List<ProductOrder>()
             };
@@ -39,11 +42,15 @@ namespace EcommerceStore.Application.Services
 
             var orderId = order.Id;
 
+            var productIds = orderInputModel.ProductsDetails.Select(p => p.ProductId).ToList();
+
+            var productsForOrder = await _productRepository.GetByIdsAsync(productIds);
+
             foreach (var productDetail in orderInputModel.ProductsDetails)
             {
-                var product = await _productRepository.GetByIdAsync(productDetail.ProductId);
+                var product = productsForOrder.FirstOrDefault(p => p.Id == productDetail.ProductId);
 
-                if (productDetail.ProductAmount <= product.Quantity && product != null)
+                if (await _productService.IsProductAvailableInStockAsync(product.Id, productDetail.ProductAmount))
                 {
                     order.ProductOrders.Add(new ProductOrder
                     {
@@ -57,12 +64,15 @@ namespace EcommerceStore.Application.Services
                 }
                 else
                 {
-                    order.Status = "Failed";
+                    order.Status = OrderStatusEnum.StatusesEnum.Failed.ToString();
 
                     await _orderRepository.SaveChangesAsync();
-
-                    throw new Exception("Products out of stock");
                 }
+            }
+
+            if (order.Status == OrderStatusEnum.StatusesEnum.Failed.ToString())
+            {
+                throw new ValidationException(ExceptionMessages.OrderCreateFailed);
             }
 
             await _orderRepository.SaveChangesAsync();
@@ -84,7 +94,7 @@ namespace EcommerceStore.Application.Services
                     CustomerFullName = $"{o.User.FirstName} {o.User.LastName}",
                     Products = o.ProductOrders.Select(p => new ProductViewModel()
                     {
-                        Id = p.Id,
+                        Id = p.Product.Id,
                         Name = p.Product.Name,
                         BrandName = p.Product.Brand.Name,
                         Description = p.Product.Description,
@@ -92,8 +102,7 @@ namespace EcommerceStore.Application.Services
                         Price = p.Product.Price,
                         Quantity = p.Quantity
                     }).ToList(),
-                    TotalPrice = o.ProductOrders
-                        .Sum(p => p.Price)
+                    TotalPrice = o.ProductOrders.Sum(p => p.Price)
                 })
                 .ToList();
 
@@ -114,7 +123,7 @@ namespace EcommerceStore.Application.Services
                 CustomerFullName = $"{order.User.FirstName} {order.User.LastName}",
                 Products = order.ProductOrders.Select(p => new ProductViewModel()
                 {
-                    Id = p.Id,
+                    Id = p.Product.Id,
                     Name = p.Product.Name,
                     BrandName = p.Product.Brand.Name,
                     Description = p.Product.Description,
@@ -122,8 +131,7 @@ namespace EcommerceStore.Application.Services
                     Price = p.Product.Price,
                     Quantity = p.Quantity
                 }).ToList(),
-                TotalPrice = order.ProductOrders
-                        .Sum(p => p.Price)
+                TotalPrice = order.ProductOrders.Sum(p => p.Price)
             };
 
             return orderViewModel;
@@ -136,7 +144,7 @@ namespace EcommerceStore.Application.Services
             if (order is null)
                 throw new ValidationException(NotFoundExceptionMessages.OrderNotFound, orderId);
 
-            order.Status = "Canceled";
+            order.Status = OrderStatusEnum.StatusesEnum.Canceled.ToString();
 
             _orderRepository.Update(order);
 
@@ -145,7 +153,18 @@ namespace EcommerceStore.Application.Services
 
         public async Task RemoveProductFromOrderAsync(int orderId, int productId)
         {
+            var order = await _orderRepository.GetByIdAsync(orderId);
+
+            var productQuantity = order.ProductOrders.FirstOrDefault(o => o.ProductId == productId && o.OrderId == orderId).Quantity;
+
             await _orderRepository.RemoveProductFromOrderAsync(orderId, productId);
+
+            var product = await _productRepository.GetByIdAsync(productId);
+
+            product.Quantity += productQuantity;
+
+            await _productRepository.SaveChangesAsync();
+            await _orderRepository.SaveChangesAsync();
         }
 
         public Task SubmitOrderAsync(int orderId)
@@ -162,19 +181,21 @@ namespace EcommerceStore.Application.Services
 
             order.ModifiedDate = DateTime.UtcNow;
 
-            switch (order.Status)
+            var status = order.Status;
+
+            switch (status)
             {
                 case "Created":
-                    order.Status = "In Review";
+                    order.Status = OrderStatusEnum.StatusesEnum.InReview.ToString();
                     break;
-                case "In Review":
-                    order.Status = "In Delivery";
+                case "InReview":
+                    order.Status = OrderStatusEnum.StatusesEnum.InDelivery.ToString();
                     break;
-                case "In Delivery":
-                    order.Status = "Completed";
+                case "InDelivery":
+                    order.Status = OrderStatusEnum.StatusesEnum.Completed.ToString();
                     break;
                 default:
-                    throw new Exception($"Order {orderId} failed");
+                    throw new ValidationException(ExceptionMessages.OrderUpdateFailed, orderId);
             }
 
             _orderRepository.Update(order);
@@ -186,9 +207,15 @@ namespace EcommerceStore.Application.Services
         {
             var order = await _orderRepository.GetByIdAsync(orderId);
 
+            var productIds = orderInputModel.ProductsDetails
+                .Select(p => p.ProductId)
+                .ToList();
+
+            var productsForOrder = await _productRepository.GetByIdsAsync(productIds);
+
             foreach (var productDetail in orderInputModel.ProductsDetails)
             {
-                var product = await _productRepository.GetByIdAsync(productDetail.ProductId);
+                var product = productsForOrder.FirstOrDefault(p => p.Id == productDetail.ProductId);
 
                 if (productDetail.ProductAmount <= product.Quantity && product != null)
                 {
@@ -209,6 +236,7 @@ namespace EcommerceStore.Application.Services
             }
 
             await _orderRepository.SaveChangesAsync();
+            await _productRepository.SaveChangesAsync();
         }
     }
 }

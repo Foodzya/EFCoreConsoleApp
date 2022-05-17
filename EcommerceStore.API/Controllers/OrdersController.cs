@@ -62,7 +62,7 @@ namespace EcommerceStore.API.Controllers
         /// <remarks>
         /// Sample request:
         ///     POST 
-        /// 
+        /// {
         ///     "ProductsDetails":
         ///     [
         ///         {
@@ -74,6 +74,7 @@ namespace EcommerceStore.API.Controllers
         ///             "ProductAmount": 3
         ///         }
         ///     ]
+        ///  }
         /// </remarks>
         /// <response code="200">Returns when order is successfully created</response>
         /// <response code="400">Returns when order input details are incorrect</response>
@@ -135,7 +136,9 @@ namespace EcommerceStore.API.Controllers
         /// <response code="200">Returns when product is successfully added to order</response>
         /// <response code="400">Returns when failed during adding product to order</response>
         [HttpPost("{orderId}/products")]
-        public async Task<ActionResult> AddProductAsync([FromRoute] int orderId, [FromBody] OrderInputModel orderInputModel)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> AddProductsAsync([FromRoute] int orderId, [FromBody] OrderInputModel orderInputModel)
         {
             if (!ModelState.IsValid)
                 throw new ValidationException(ModelState);
@@ -149,14 +152,15 @@ namespace EcommerceStore.API.Controllers
         /// Remove product(-s) from existing order
         /// </summary>
         /// <param name="orderId"></param>
-        /// <param name="productId"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
-        [HttpDelete("{orderId}")]
-        public async Task<ActionResult> RemoveProductsAsync([FromRoute] int orderId, [FromQuery] int productId)
+        [HttpDelete("{orderId}/product")]
+        public async Task<ActionResult> RemoveProductAsync([FromRoute] int orderId, [FromQuery] int id)
         {
-            await _orderService.RemoveProductFromOrderAsync(orderId, productId);
+            await _orderService.RemoveProductFromOrderAsync(orderId, id);
 
             return Ok();
         }
+
     }
 }

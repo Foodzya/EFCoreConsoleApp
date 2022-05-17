@@ -21,12 +21,13 @@ namespace EcommerceStore.Infrastructure.Repositories
             await _context.ProductCategories.AddAsync(productCategory);
         }
 
-        public async Task<List<ProductCategory>> GetAllAsync(int sectionId)
+        public async Task<List<ProductCategory>> GetAllForSectionAsync(int sectionId)
         {
             var productCategories = await _context.ProductCategories
                 .Include(p => p.Products)
                     .ThenInclude(p => p.Brand)
                 .Where(p => p.ProductCategorySections.Any(p => p.SectionId == sectionId))
+                .Where(p => !p.IsDeleted)
                 .ToListAsync();
 
             return productCategories;
@@ -37,12 +38,15 @@ namespace EcommerceStore.Infrastructure.Repositories
             return await _context.ProductCategories
                 .Include(p => p.Products)
                     .ThenInclude(p => p.Brand)
+                .Where(p => !p.IsDeleted)
                 .FirstOrDefaultAsync(p => p.Id == productCategoryId);
         }
 
         public async Task<ProductCategory> GetByNameAsync(string productCategoryName)
         {
-            return await _context.ProductCategories.FirstOrDefaultAsync(p => p.Name == productCategoryName);
+            return await _context.ProductCategories
+                .Where(p => !p.IsDeleted)
+                .FirstOrDefaultAsync(p => p.Name == productCategoryName);
         }
 
         public void Remove(ProductCategory productCategory)

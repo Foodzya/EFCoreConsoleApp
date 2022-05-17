@@ -19,10 +19,10 @@ namespace EcommerceStore.Application.Models.InputModels
         [Url]
         public string Image { get; set; }
         [Required]
-        [Range(1, 1000, ErrorMessage = "Brand's id must be specified between 1 and 1000")]
+        [Range(1, int.MaxValue, ErrorMessage = "Brand's id must be specified between 1 and 1000")]
         public int BrandId { get; set; }
         [Required]
-        [Range(1, 1000, ErrorMessage = "Product category id must be specified between 1 and 1000")]
+        [Range(1, int.MaxValue, ErrorMessage = "Product category id must be specified between 1 and 1000")]
         public int ProductCategoryId { get; set; }
     }
 }

@@ -7,6 +7,7 @@ namespace EcommerceStore.Domain.Interfaces
     public interface IProductRepository
     {
         public Task<Product> GetByIdAsync(int productId);
+        public Task<List<Product>> GetByIdsAsync(List<int> productIds);
         public Task<List<Product>> GetAllAsync();
         public Task CreateAsync(Product product);
         public void Remove(Product product);

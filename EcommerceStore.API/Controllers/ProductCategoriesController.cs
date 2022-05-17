@@ -13,7 +13,7 @@ namespace EcommerceStore.API.Controllers
     /// ProductCategory controller for managing product categories using CRUD operations
     /// </summary>
     [ApiController]
-    [Route("api/productcategories")]
+    [Route("api/product-categories")]
     public class ProductCategoriesController : ControllerBase
     {
         private readonly IProductCategoryService _productCategoryService;
@@ -65,7 +65,8 @@ namespace EcommerceStore.API.Controllers
         /// 
         ///     {
         ///         "name": "Sneakers",
-        ///         "parentCategoryId": 1
+        ///         "parentCategoryId": 1,
+        ///         "sectionId": 2
         ///     }
         /// </remarks>
         /// <response code="200">Returns when product category is successfully updated</response>

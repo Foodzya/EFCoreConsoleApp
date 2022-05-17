@@ -37,6 +37,16 @@ namespace EcommerceStore.Infrastructure.Repositories
                 .FirstOrDefaultAsync(p => p.Id == productId);
         }
 
+        public async Task<List<Product>> GetByIdsAsync(List<int> ids)
+        {
+            var products = await _context.Products
+                .Where(p => ids.Contains(p.Id))
+                .Include(p => p.ProductOrders)
+                .ToListAsync();
+
+            return products;
+        }
+
         public async Task<Product> GetByNameAsync(string productName)
         {
             var product = await _context.Products.FirstOrDefaultAsync(p => p.Name == productName);

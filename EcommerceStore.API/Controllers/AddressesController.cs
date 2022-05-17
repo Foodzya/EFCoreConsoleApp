@@ -81,7 +81,7 @@ namespace EcommerceStore.API.Controllers
         ///     {
         ///         "streetAddress": "some address details",
         ///         "postcode": 123456,
-        ///         "city": "some city",
+        ///         "city": "some city"
         ///     }
         /// </remarks>
         /// <response code="200">Returns when address is successfully created</response>
