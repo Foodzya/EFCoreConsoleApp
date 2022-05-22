@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using EcommerceStore.Application.Models.InputModels;
 using EcommerceStore.Application.Models.ViewModels;
+using EcommerceStore.Domain.Entities;
 
 namespace EcommerceStore.Application.Interfaces
 {
@@ -12,6 +13,6 @@ namespace EcommerceStore.Application.Interfaces
         public Task RenameSectionAsync(int sectionId, SectionInputModel sectionInputModel);
         public Task RemoveSectionAsync(int sectionId);
         public Task CreateSectionAsync(SectionInputModel sectionInputModel);
-        public Task LinkCategoryToSectionAsync(ProductCategoryInputModel productCategoryInputModel);
+        public Task LinkCategoryToSectionAsync(int productCategoryId, int sectionId);
     }
 }

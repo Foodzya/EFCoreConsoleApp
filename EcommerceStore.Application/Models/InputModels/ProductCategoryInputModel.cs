@@ -9,8 +9,5 @@ namespace EcommerceStore.Application.Models.InputModels
         public string Name { get; set; }
         [Range(1, int.MaxValue, ErrorMessage = "Parent category ID must be integer starting from 1")]
         public int? ParentCategoryId { get; set; }
-        [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "Section id must be integer starting from 1")]
-        public int SectionId { get; set; }
     }
 }

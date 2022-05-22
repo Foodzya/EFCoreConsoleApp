@@ -13,5 +13,6 @@ namespace EcommerceStore.Application.Interfaces
         public Task UpdateProductCategoryAsync(int productCategoryId, ProductCategoryInputModel productCategoryInputModel);
         public Task RemoveProductCategoryAsync(int productCategoryId);
         public Task CreateProductCategoryAsync(ProductCategoryInputModel productCategoryInputModel);
+        public Task LinkCategoryToSectionAsync(int productCategoryId, int sectionId);
     }
 }

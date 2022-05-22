@@ -56,6 +56,7 @@ namespace EcommerceStore.Application.Services
                     Description = p.Description,
                     Image = p.Image,
                     BrandName = p.Brand.Name,
+                    CategoryName = p.ProductCategory.Name
                 })
                 .ToList();
 
@@ -78,6 +79,7 @@ namespace EcommerceStore.Application.Services
                 Price = product.Price,
                 Quantity = product.Quantity,
                 BrandName = product.Brand.Name,
+                CategoryName = product.ProductCategory.Name
             };
 
             return productViewModel;

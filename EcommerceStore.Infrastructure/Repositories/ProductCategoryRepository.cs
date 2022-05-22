@@ -26,6 +26,7 @@ namespace EcommerceStore.Infrastructure.Repositories
             var productCategories = await _context.ProductCategories
                 .Include(p => p.Products)
                     .ThenInclude(p => p.Brand)
+                .Include(p => p.ChildrenCategory)
                 .Where(p => p.ProductCategorySections.Any(p => p.SectionId == sectionId))
                 .Where(p => !p.IsDeleted)
                 .ToListAsync();
@@ -38,6 +39,7 @@ namespace EcommerceStore.Infrastructure.Repositories
             return await _context.ProductCategories
                 .Include(p => p.Products)
                     .ThenInclude(p => p.Brand)
+                .Include(p => p.ChildrenCategory)
                 .Where(p => !p.IsDeleted)
                 .FirstOrDefaultAsync(p => p.Id == productCategoryId);
         }

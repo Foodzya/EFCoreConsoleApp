@@ -11,17 +11,14 @@ namespace EcommerceStore.Application.Exceptions
         public Dictionary<string, List<string>> FieldSpecificMessages { get; private set; }
         public List<string> GeneralMessages { get; private set; }
 
-        public ValidationException(List<string> messages)
-        {
-            ErrorMessages = messages;
-        }
-
         public ValidationException(string exception, int itemId)
+            : base(exception)
         {
             ValidateException(exception, itemId);
         }
 
         public ValidationException(string exception)
+            : base(exception)
         {
             ErrorMessages = new List<string> { exception };
         }
@@ -31,7 +28,6 @@ namespace EcommerceStore.Application.Exceptions
             Dictionary<string, string[]> extractedErrors = new();
 
             FieldSpecificMessages = modelState.Keys.ToDictionary(k => k, k => modelState[k].Errors.Select(e => e.ErrorMessage).ToList());
-            GeneralMessages = new List<string>();
         }
         private void ValidateException(string message, int itemId)
         {

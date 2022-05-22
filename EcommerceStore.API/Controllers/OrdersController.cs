@@ -44,9 +44,9 @@ namespace EcommerceStore.API.Controllers
         /// <param name="userId"></param>
         /// <returns></returns>
         /// <response code="200">Returns when list of orders is successfully obtained</response>
-        [HttpGet]
+        [HttpGet("/users/{userId}")]
         [ProducesResponseType(typeof(List<OrderViewModel>), StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<OrderViewModel>>> GetAllAsync([FromQuery] int userId)
+        public async Task<ActionResult<List<OrderViewModel>>> GetAllAsync([FromRoute] int userId)
         {
             var ordersViewModel = await _orderService.GetAllOrdersForUserAsync(userId);
 
@@ -78,10 +78,10 @@ namespace EcommerceStore.API.Controllers
         /// </remarks>
         /// <response code="200">Returns when order is successfully created</response>
         /// <response code="400">Returns when order input details are incorrect</response>
-        [HttpPost]
+        [HttpPost("/users/{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> CreateAsync([FromQuery] int userId, [FromBody] OrderInputModel orderInputModel)
+        public async Task<ActionResult> CreateAsync([FromRoute] int userId, [FromBody] OrderInputModel orderInputModel)
         {
             if (!ModelState.IsValid)
                 throw new ValidationException(ModelState);
@@ -152,12 +152,12 @@ namespace EcommerceStore.API.Controllers
         /// Remove product(-s) from existing order
         /// </summary>
         /// <param name="orderId"></param>
-        /// <param name="id"></param>
+        /// <param name="productId"></param>
         /// <returns></returns>
-        [HttpDelete("{orderId}/product")]
-        public async Task<ActionResult> RemoveProductAsync([FromRoute] int orderId, [FromQuery] int id)
+        [HttpDelete("{orderId}/products/{productId}")]
+        public async Task<ActionResult> RemoveProductAsync([FromRoute] int orderId, [FromBody] int productId)
         {
-            await _orderService.RemoveProductFromOrderAsync(orderId, id);
+            await _orderService.RemoveProductFromOrderAsync(orderId, productId);
 
             return Ok();
         }

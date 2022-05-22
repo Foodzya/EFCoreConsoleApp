@@ -53,7 +53,7 @@ namespace EcommerceStore.Application.Services
                     ProductCategories = s.ProductCategorySections
                         .Select(p => new ProductCategoryViewModel
                         {
-                            Id = p.ProductCategoryId,
+                            Id = (int)p.ProductCategoryId,
                             Name = p.ProductCategory.Name
                         })
                         .ToList()
@@ -76,7 +76,7 @@ namespace EcommerceStore.Application.Services
                 ProductCategories = section.ProductCategorySections
                     .Select(p => new ProductCategoryViewModel
                     {
-                        Id = p.ProductCategoryId,
+                        Id = (int)p.ProductCategoryId,
                         Name = p.ProductCategory.Name
                     })
                     .ToList()
@@ -85,14 +85,18 @@ namespace EcommerceStore.Application.Services
             return sectionViewModel;
         }
 
-        public async Task LinkCategoryToSectionAsync(ProductCategoryInputModel productcategoryIm)
+        public async Task LinkCategoryToSectionAsync(int productCategoryId, int sectionId)
         {
-            var section = await _sectionRepository.GetByIdAsync(productcategoryIm.SectionId);
+            ProductCategory productCategory = await _productCategoryRepository.GetByIdAsync(productCategoryId);
+            ProductCategory parentProductCategory = null;
+
+            var section = await _sectionRepository.GetByIdAsync(sectionId);
 
             if (section is null)
-                throw new ValidationException(NotFoundExceptionMessages.SectionNotFound, productcategoryIm.SectionId);
+                throw new ValidationException(NotFoundExceptionMessages.SectionNotFound, sectionId);
 
-            var parentProductCategory = await _productCategoryRepository.GetByIdAsync((int)productcategoryIm.ParentCategoryId);
+            if (productCategory.ParentCategoryId != null)
+                parentProductCategory = await _productCategoryRepository.GetByIdAsync((int)productCategory.ParentCategoryId);
 
             if (parentProductCategory != null)
             {
@@ -100,19 +104,19 @@ namespace EcommerceStore.Application.Services
                     .Select(s => s.SectionId)
                     .ToList();
 
-                if (!parentProductCategorySectionIds.Contains(productcategoryIm.SectionId))
+                if (!parentProductCategorySectionIds.Contains(sectionId))
                     throw new ValidationException(ExceptionMessages.LinkCategoryToSectionFailed);
             }
 
             section.ProductCategorySections.Add(new ProductCategorySection
             {
-                ProductCategoryId = (int)productcategoryIm.ParentCategoryId,
-                SectionId = productcategoryIm.SectionId
+                ProductCategory = productCategory,
+                SectionId = sectionId
             });
 
             _sectionRepository.Update(section);
 
-           await _sectionRepository.SaveChangesAsync();
+            await _sectionRepository.SaveChangesAsync();
         }
 
         public async Task RemoveSectionAsync(int sectionId)

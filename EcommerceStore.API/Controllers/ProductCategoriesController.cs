@@ -17,10 +17,12 @@ namespace EcommerceStore.API.Controllers
     public class ProductCategoriesController : ControllerBase
     {
         private readonly IProductCategoryService _productCategoryService;
+        private readonly ISectionService _sectionService;
 
-        public ProductCategoriesController(IProductCategoryService productCategoryService)
+        public ProductCategoriesController(IProductCategoryService productCategoryService, ISectionService sectionService)
         {
             _productCategoryService = productCategoryService;
+            _sectionService = sectionService;
         }
 
         /// <summary>
@@ -29,9 +31,9 @@ namespace EcommerceStore.API.Controllers
         /// <param name="sectionId"></param>
         /// <returns></returns>
         /// <response code="200">Returns when list of product categories is successfully obtained</response>
-        [HttpGet]
+        [HttpGet("/section/{sectionId}")]
         [ProducesResponseType(typeof(List<ProductCategoryViewModel>), StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<ProductCategoryViewModel>>> GetAllAsync([FromQuery] int sectionId)
+        public async Task<ActionResult<List<ProductCategoryViewModel>>> GetAllAsync([FromBody] int sectionId)
         {
             var productCategoriesViewModel = await _productCategoryService.GetAllProductCategoriesForSectionAsync(sectionId);
 
@@ -125,6 +127,22 @@ namespace EcommerceStore.API.Controllers
         public async Task<ActionResult> DeleteByIdAsync([FromRoute] int productCategoryId)
         {
             await _productCategoryService.RemoveProductCategoryAsync(productCategoryId);
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Links product category to section
+        /// </summary>
+        /// <param name="productCategoryId"></param>
+        /// <param name="sectionId"></param>
+        /// <returns></returns>
+        /// <response code="200">Returns when product category is successfully attached to section</response>
+        [HttpPut("{productCategoryId}/sections/{sectionId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult> LinkCategoryToSectionAsync([FromRoute] int productCategoryId, [FromRoute] int sectionId)
+        {
+            await _sectionService.LinkCategoryToSectionAsync(productCategoryId, sectionId);
 
             return Ok();
         }

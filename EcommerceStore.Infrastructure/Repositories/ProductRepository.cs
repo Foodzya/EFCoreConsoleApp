@@ -42,6 +42,7 @@ namespace EcommerceStore.Infrastructure.Repositories
             var products = await _context.Products
                 .Where(p => ids.Contains(p.Id))
                 .Include(p => p.ProductOrders)
+                .Include(p => p.ProductCategory)
                 .ToListAsync();
 
             return products;

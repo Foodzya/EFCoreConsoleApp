@@ -36,12 +36,6 @@ namespace EcommerceStore.Application.Services
                 ProductOrders = new List<ProductOrder>()
             };
 
-            await _orderRepository.CreateAsync(order);
-
-            await _orderRepository.SaveChangesAsync();
-
-            var orderId = order.Id;
-
             var productIds = orderInputModel.ProductsDetails.Select(p => p.ProductId).ToList();
 
             var productsForOrder = await _productRepository.GetByIdsAsync(productIds);
@@ -54,7 +48,7 @@ namespace EcommerceStore.Application.Services
                 {
                     order.ProductOrders.Add(new ProductOrder
                     {
-                        OrderId = orderId,
+                        Order = order,
                         ProductId = productDetail.ProductId,
                         Quantity = productDetail.ProductAmount,
                         Price = product.Price * productDetail.ProductAmount
@@ -70,10 +64,12 @@ namespace EcommerceStore.Application.Services
                 }
             }
 
+            await _orderRepository.CreateAsync(order);
+
             if (order.Status == OrderStatusEnum.StatusesEnum.Failed.ToString())
             {
                 throw new ValidationException(ExceptionMessages.OrderCreateFailed);
-            }
+            }            
 
             await _orderRepository.SaveChangesAsync();
             await _productRepository.SaveChangesAsync();
@@ -83,7 +79,7 @@ namespace EcommerceStore.Application.Services
         {
             var orders = await _orderRepository.GetAllForUserAsync(userId);
 
-            if (orders is null)
+            if (orders.Count == 0)
                 throw new ValidationException(NotFoundExceptionMessages.OrderNotFound);
 
             var ordersViewModel = orders
@@ -141,13 +137,33 @@ namespace EcommerceStore.Application.Services
         {
             var order = await _orderRepository.GetByIdAsync(orderId);
 
-            if (order is null)
+            if (order is null || order.Status == OrderStatusEnum.StatusesEnum.Canceled.ToString() || order.Status == OrderStatusEnum.StatusesEnum.Failed.ToString())
                 throw new ValidationException(NotFoundExceptionMessages.OrderNotFound, orderId);
 
             order.Status = OrderStatusEnum.StatusesEnum.Canceled.ToString();
 
+            var productsInOrder = order.ProductOrders
+                .Select(p => new
+                {
+                    ProductId = p.ProductId,
+                    ProductQuantity = p.Quantity
+                })
+                .ToList();
+
+            var products = await _productRepository.GetByIdsAsync(productsInOrder.Select(p => p.ProductId).ToList());
+
+            products.ForEach(p =>
+            {
+                productsInOrder.ForEach(o =>
+                {
+                    if (p.Id == o.ProductId)
+                        p.Quantity += o.ProductQuantity;
+                });
+            });
+
             _orderRepository.Update(order);
 
+            await _productRepository.SaveChangesAsync();
             await _orderRepository.SaveChangesAsync();
         }
 

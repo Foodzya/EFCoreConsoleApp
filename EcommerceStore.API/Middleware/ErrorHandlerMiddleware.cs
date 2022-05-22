@@ -38,6 +38,7 @@ namespace EcommerceStore.API.Middleware
                 }
 
                 var result = JsonSerializer.Serialize(new { message = error?.Message });
+
                 await response.WriteAsync(result);
             }
         }

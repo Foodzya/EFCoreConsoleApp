@@ -34,8 +34,6 @@ namespace EcommerceStore.Application.Services
                 ParentCategoryId = productCategoryInputModel.ParentCategoryId
             };
 
-            await _sectionService.LinkCategoryToSectionAsync(productCategoryInputModel);
-
             await _productCategoryRepository.CreateAsync(productCategory);
 
             await _productCategoryRepository.SaveChangesAsync();
@@ -65,6 +63,9 @@ namespace EcommerceStore.Application.Services
                             BrandName = p.Brand.Name,
                         })
                         .ToList(),
+                    Subcategories = p.ChildrenCategory
+                        .Select(c => c.Name)
+                        .ToList()
                 })
                 .ToList();
 
@@ -93,6 +94,9 @@ namespace EcommerceStore.Application.Services
                         Image = p.Image,
                         BrandName = p.Brand.Name
                     })
+                    .ToList(),
+                Subcategories = productCategory.ChildrenCategory
+                    .Select(c => c.Name)
                     .ToList()
             };
 
@@ -139,9 +143,25 @@ namespace EcommerceStore.Application.Services
             var productCategory = await _productCategoryRepository.GetByIdAsync(productCategoryId);
 
             productCategory.Name = productCategoryInputModel.Name;
-            productCategory.ParentCategoryId = productCategoryInputModel.ParentCategoryId;
 
             _productCategoryRepository.Update(productCategory);
+
+            await _productCategoryRepository.SaveChangesAsync();
+        }
+
+        public async Task LinkCategoryToSectionAsync(int productCategoryId, int sectionId)
+        {
+            var section = await _sectionService.GetSectionByIdAsync(sectionId);
+
+            if (section is null)
+                throw new ValidationException(NotFoundExceptionMessages.SectionNotFound, sectionId);
+
+            var productCategory = await _productCategoryRepository.GetByIdAsync(productCategoryId);
+
+            if (productCategory is null)
+                throw new ValidationException(NotFoundExceptionMessages.ProductCategoryNotFound, productCategoryId);
+
+            productCategory.ProductCategorySections.Select(p => p.SectionId == sectionId);
 
             await _productCategoryRepository.SaveChangesAsync();
         }
