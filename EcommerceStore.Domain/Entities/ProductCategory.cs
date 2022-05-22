@@ -7,6 +7,7 @@ namespace EcommerceStore.Domain.Entities
         public int Id { get; set; }
         public string Name { get; set; }
         public int? ParentCategoryId { get; set; }
+        public bool IsDeleted { get; set; }
 
         public virtual ProductCategory ParentCategory { get; set; }
         public virtual ICollection<Product> Products { get; set; }

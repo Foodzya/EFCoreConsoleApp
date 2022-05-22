@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using EcommerceStore.Application.Exceptions;
 using EcommerceStore.Application.Interfaces;
 using EcommerceStore.Application.Models.InputModels;
@@ -5,7 +8,7 @@ using EcommerceStore.Application.Models.ViewModels;
 using EcommerceStore.Domain.Entities;
 using EcommerceStore.Domain.Interfaces;
 
-namespace EcommerceStore.Infrastucture.Services
+namespace EcommerceStore.Application.Services
 {
     public class BrandService : IBrandService
     {
@@ -20,20 +23,18 @@ namespace EcommerceStore.Infrastucture.Services
         {
             var existingBrand = await _brandRepository.GetByNameAsync(brandIm.Name);
 
-            if (existingBrand.Name is null)
+            if (existingBrand != null)
+                throw new ValidationException(AlreadyExistExceptionMessages.BrandAlreadyExists, existingBrand.Id);
+
+            var brand = new Brand
             {
-                var brand = new Brand
-                {
-                    Name = brandIm.Name,
-                    FoundationYear = brandIm.FoundationYear
-                };
+                Name = brandIm.Name,
+                FoundationYear = brandIm.FoundationYear
+            };
 
-                await _brandRepository.CreateAsync(brand);
+            await _brandRepository.CreateAsync(brand);
 
-                await _brandRepository.SaveChangesAsync();
-            }
-
-            throw new ValidationException(ExceptionMessages.BrandAlreadyExists);
+            await _brandRepository.SaveChangesAsync();
         }
 
         public async Task<List<BrandViewModel>> GetAllBrandsAsync()
@@ -41,11 +42,12 @@ namespace EcommerceStore.Infrastucture.Services
             var brands = await _brandRepository.GetAllAsync();
 
             if (brands is null)
-                throw new ValidationException(ExceptionMessages.BrandNotFound);
+                throw new ValidationException(NotFoundExceptionMessages.BrandNotFound);
 
             var brandsViewModel = brands
                 .Select(b => new BrandViewModel
                 {
+                    Id = b.Id,
                     Name = b.Name,
                     FoundationYear = b.FoundationYear,
                     ProductsCount = b.Products.Count()
@@ -60,10 +62,11 @@ namespace EcommerceStore.Infrastucture.Services
             var brand = await _brandRepository.GetByIdAsync(brandId);
 
             if (brand is null)
-                throw new ValidationException(ExceptionMessages.BrandNotFound);
+                throw new ValidationException(NotFoundExceptionMessages.BrandNotFound, brandId);
 
             var brandViewModel = new BrandViewModel
             {
+                Id = brand.Id,
                 Name = brand.Name,
                 FoundationYear = brand.FoundationYear,
                 ProductsCount = brand.Products.Count()
@@ -76,19 +79,17 @@ namespace EcommerceStore.Infrastucture.Services
         {
             var existingBrand = await _brandRepository.GetByNameAsync(brandIm.Name);
 
-            if (existingBrand is null)
-            {
-                var brand = await _brandRepository.GetByIdAsync(brandId);
+            if (existingBrand != null && existingBrand.Id != brandId)
+                throw new ValidationException(AlreadyExistExceptionMessages.BrandAlreadyExists, brandId);
 
-                brand.Name = brandIm.Name;
-                brand.FoundationYear = brandIm.FoundationYear;
+            var brand = await _brandRepository.GetByIdAsync(brandId);
 
-                await _brandRepository.UpdateAsync(brand);
+            brand.Name = brandIm.Name;
+            brand.FoundationYear = brandIm.FoundationYear;
 
-                await _brandRepository.SaveChangesAsync();
-            }
+            _brandRepository.Update(brand);
 
-            throw new ValidationException(ExceptionMessages.BrandAlreadyExists);
+            await _brandRepository.SaveChangesAsync();
         }
 
         public async Task RemoveBrandByIdAsync(int brandId)
@@ -96,11 +97,11 @@ namespace EcommerceStore.Infrastucture.Services
             var brand = await _brandRepository.GetByIdAsync(brandId);
 
             if (brand is null)
-                throw new ValidationException(ExceptionMessages.BrandNotFound);
+                throw new ValidationException(NotFoundExceptionMessages.BrandNotFound, brandId);
 
             brand.IsDeleted = true;
 
-            await _brandRepository.UpdateAsync(brand);
+            _brandRepository.Update(brand);
 
             await _brandRepository.SaveChangesAsync();
         }

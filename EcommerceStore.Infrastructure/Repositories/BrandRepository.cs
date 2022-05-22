@@ -1,9 +1,12 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using EcommerceStore.Domain.Entities;
 using EcommerceStore.Domain.Interfaces;
-using EcommerceStore.Infrastucture.Persistence;
+using EcommerceStore.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace EcommerceStore.Infrastucture.Repositories
+namespace EcommerceStore.Infrastructure.Repositories
 {
     public class BrandRepository : IBrandRepository
     {
@@ -23,6 +26,7 @@ namespace EcommerceStore.Infrastucture.Repositories
         {
             var brands = await _context.Brands
                 .Include(b => b.Products)
+                .Where(b => !b.IsDeleted)
                 .ToListAsync();
 
             return brands;
@@ -38,12 +42,12 @@ namespace EcommerceStore.Infrastucture.Repositories
             return brand;
         }
 
-        public async Task UpdateAsync(Brand brand)
+        public void Update(Brand brand)
         {
             _context.Brands.Update(brand);
         }
 
-        public async Task RemoveAsync(Brand brand)
+        public void Remove(Brand brand)
         {
             _context.Brands.Remove(brand);
         }

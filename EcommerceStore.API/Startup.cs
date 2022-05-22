@@ -1,14 +1,16 @@
-﻿using EcommerceStore.Application.Interfaces;
-using EcommerceStore.Domain.Interfaces;
-using EcommerceStore.Infrastucture.Persistence;
-using EcommerceStore.Infrastucture.Repositories;
-using EcommerceStore.Infrastucture.Services;
+﻿using EcommerceStore.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using EcommerceStore.API.Middleware;
+using EcommerceStore.API.Extensions.DependencyInjection;
+using System;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
+using System.IO;
 
 namespace EcommerceStore.API
 {
@@ -25,15 +27,29 @@ namespace EcommerceStore.API
         {
             services.AddDbContext<EcommerceContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("EcommerceConnection")));
 
-            services.AddTransient<IBrandRepository, BrandRepository>();
+            services.AddApplicationServices();
 
-            services.AddTransient<IBrandService, BrandService>();
+            services.AddRepositories();
 
             services.AddControllers()
                 .ConfigureApiBehaviorOptions(options =>
                 {
                     options.SuppressModelStateInvalidFilter = true;
                 });
+
+            services.AddSwaggerGen(opt =>
+            {
+                opt.SwaggerDoc("v1",
+                    new OpenApiInfo
+                    {
+                        Title = "Ecommerce API",
+                        Description = "Ecommerce API for working with Ecommerce Store",
+                        Version = "v1"
+                    });
+
+                var xmlFileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFileName));
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -49,9 +65,19 @@ namespace EcommerceStore.API
 
             app.UseAuthorization();
 
+            app.UseMiddleware<ErrorHandlerMiddleware>();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(opt =>
+            {
+                opt.SwaggerEndpoint("/swagger/v1/swagger.json", "Ecommerce API");
+                opt.RoutePrefix = "api/docs";
             });
         }
     }

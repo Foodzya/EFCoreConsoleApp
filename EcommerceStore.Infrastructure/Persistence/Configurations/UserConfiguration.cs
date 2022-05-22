@@ -2,7 +2,7 @@ using EcommerceStore.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace EcommerceStore.Infrastucture.Persistence.Configurations
+namespace EcommerceStore.Infrastructure.Persistence.Configurations
 {
     public class UserConfiguration : IEntityTypeConfiguration<User>
     {
@@ -15,7 +15,7 @@ namespace EcommerceStore.Infrastucture.Persistence.Configurations
             builder.HasIndex(u => u.RoleId).IsUnique(false);
             builder
                 .HasOne(u => u.Role)
-                .WithOne(r => r.User);
+                .WithMany(r => r.Users);
         }
     }
 }

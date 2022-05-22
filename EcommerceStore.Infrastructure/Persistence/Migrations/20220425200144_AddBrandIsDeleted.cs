@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace EcommerceStore.Infrastucture.Persistence.Migrations
+namespace EcommerceStore.Infrastructure.Persistence.Migrations
 {
     public partial class AddBrandIsDeleted : Migration
     {

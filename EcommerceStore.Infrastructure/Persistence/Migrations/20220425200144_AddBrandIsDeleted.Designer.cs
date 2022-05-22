@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EcommerceStore.Infrastucture.Persistence.Migrations
+namespace EcommerceStore.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(EcommerceContext))]
     [Migration("20220425200144_AddBrandIsDeleted")]
