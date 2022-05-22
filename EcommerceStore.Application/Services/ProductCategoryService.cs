@@ -148,22 +148,5 @@ namespace EcommerceStore.Application.Services
 
             await _productCategoryRepository.SaveChangesAsync();
         }
-
-        public async Task LinkCategoryToSectionAsync(int productCategoryId, int sectionId)
-        {
-            var section = await _sectionService.GetSectionByIdAsync(sectionId);
-
-            if (section is null)
-                throw new ValidationException(NotFoundExceptionMessages.SectionNotFound, sectionId);
-
-            var productCategory = await _productCategoryRepository.GetByIdAsync(productCategoryId);
-
-            if (productCategory is null)
-                throw new ValidationException(NotFoundExceptionMessages.ProductCategoryNotFound, productCategoryId);
-
-            productCategory.ProductCategorySections.Select(p => p.SectionId == sectionId);
-
-            await _productCategoryRepository.SaveChangesAsync();
-        }
     }
 }
