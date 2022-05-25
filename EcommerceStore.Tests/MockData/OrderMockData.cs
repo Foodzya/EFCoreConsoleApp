@@ -6,18 +6,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static EcommerceStore.Application.Enums.OrderStatusEnum;
 
 namespace EcommerceStore.Tests.MockData
 {
     public static class OrderMockData
     {
-        public static Order GetOrder(string status, bool isDeleted)
+        public static Order GetOrder(int id, StatusesEnum status, bool isDeleted)
         {
             var order = new Order
             {
-                Id = 1,
+                Id = id,
                 ModifiedDate = DateTime.UtcNow,
-                Status = "Canceled",
+                Status = status.ToString(),
                 IsDeleted = isDeleted,
                 UserId = 1,
                 User = new User

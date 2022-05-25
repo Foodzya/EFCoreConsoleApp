@@ -17,34 +17,29 @@ using static EcommerceStore.Application.Enums.OrderStatusEnum;
 
 namespace EcommerceStore.Tests.Tests
 {
-    public class OrderServiceTests : IDisposable
+    public class OrderServiceTests
     {
         //private readonly Mock<IOrderRepository> _orderRepositoryMock = new Mock<IOrderRepository>();
         //private readonly Mock<IProductRepository> productRepositoryMock = new Mock<IProductRepository>();
         private readonly Mock<IProductService> productServiceMock = new Mock<IProductService>();
-        private EcommerceContext _context;
 
         public OrderServiceTests()
         {
         }
 
-        private EcommerceContext GetDatabaseContext()
+        private DbContextOptions<EcommerceContext> GetDbContextOptions(string dbName)
         {
-            var options = new DbContextOptionsBuilder<EcommerceContext>()
-                    .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            return new DbContextOptionsBuilder<EcommerceContext>()
+                    .UseInMemoryDatabase(databaseName: dbName)
                     .Options;
-
-            _context = new EcommerceContext(options);
-
-            _context.Database.EnsureCreatedAsync();
-
-            return _context;
         }
 
-        private OrderService GetOrderService(EcommerceContext context)
+        private OrderService GetOrderService(string dbName)
         {
-            var orderRepository = new OrderRepository(context);
-            var productRepository = new ProductRepository(context);
+            EcommerceContext _context = new EcommerceContext(GetDbContextOptions(dbName));
+
+            var orderRepository = new OrderRepository(_context);
+            var productRepository = new ProductRepository(_context);
             var productService = new ProductService(productRepository);
 
             OrderService sut = new OrderService(orderRepository, productRepository, productService);
@@ -57,12 +52,17 @@ namespace EcommerceStore.Tests.Tests
         public async Task GetOrderByIdAsync_ShouldReturnOrder_WhenOrderExists(int orderId)
         {
             // Arrange
-            _context = GetDatabaseContext();
+            var dbName = nameof(GetOrderByIdAsync_ShouldReturnOrder_WhenOrderExists);
 
-            OrderService _sut = GetOrderService(_context);
+            OrderService _sut = GetOrderService(dbName);
 
-            await SeedDatabase.SeedDatabaseWithOrdersAsync(_context);
-            var status = "Created";
+            using (var context = new EcommerceContext(GetDbContextOptions(dbName)))
+            {
+                await SeedDatabase.SeedDatabaseWithOrdersAsync(context);
+            }
+
+            var customerFullName = "John Wick";
+            var status = StatusesEnum.Created.ToString();
 
             // Act
             var result = await _sut.GetOrderByIdAsync(orderId);
@@ -70,6 +70,7 @@ namespace EcommerceStore.Tests.Tests
             // Assert
             Assert.Equal(orderId, result.Id);
             Assert.Equal(status, result.Status);
+            Assert.Equal(customerFullName, result.CustomerFullName);
         }
 
         [Theory]
@@ -77,14 +78,18 @@ namespace EcommerceStore.Tests.Tests
         public async Task GetOrderByIdAsync_ShouldReturnOrder_WhenOrderStatusIsCorrect(int orderId)
         {
             // Arrange
-            _context = GetDatabaseContext();
+            var dbName = nameof(GetOrderByIdAsync_ShouldReturnOrder_WhenOrderStatusIsCorrect);
 
-            OrderService _sut = GetOrderService(_context);
+            OrderService _sut = GetOrderService(dbName);
 
             var listOfOrderStatuses = Enum.GetNames(typeof(StatusesEnum)).ToList();
-            var status = "Created";
+            var status = StatusesEnum.Created.ToString();
 
-            await SeedDatabase.SeedDatabaseWithOrdersAsync(_context);
+            using (var context = new EcommerceContext(GetDbContextOptions(dbName)))
+            {
+                context.Orders.Add(OrderMockData.GetOrder(orderId, StatusesEnum.Created, false));
+                await context.SaveChangesAsync();
+            }
 
             // Act
             var result = await _sut.GetOrderByIdAsync(orderId);
@@ -92,6 +97,7 @@ namespace EcommerceStore.Tests.Tests
             // Assert
             listOfOrderStatuses.Should().Contain(result.Status);
             Assert.Equal(status, result.Status);
+            Assert.Equal(orderId, result.Id);
         }
 
         [Theory]
@@ -99,17 +105,27 @@ namespace EcommerceStore.Tests.Tests
         public async Task GetAllOrdersForUserAsync_ShouldReturnAllOrdersForUser_WhenUserHaveOrders(int userId)
         {
             // Arrange
-            _context = GetDatabaseContext();
+            var dbName = nameof(GetAllOrdersForUserAsync_ShouldReturnAllOrdersForUser_WhenUserHaveOrders);
 
-            OrderService _sut = GetOrderService(_context);
+            OrderService _sut = GetOrderService(dbName);
 
-            await SeedDatabase.SeedDatabaseWithOrdersAsync(_context);
+            using (var _context = new EcommerceContext(GetDbContextOptions(dbName)))
+            {
+                await SeedDatabase.SeedDatabaseWithOrdersAsync(_context);
+            }
 
             // Act
             var result = await _sut.GetAllOrdersForUserAsync(userId);
 
+            int orderCount;
+
+            using (var _context = new EcommerceContext(GetDbContextOptions(dbName)))
+            {
+                orderCount = _context.Orders.Count(o => o.UserId.Equals(userId));
+            }
+
             // Assert
-            result.Should().HaveCount(_context.Orders.Count(o => o.UserId.Equals(userId)));
+            result.Should().HaveCount(orderCount);
         }
 
         [Theory]
@@ -117,15 +133,24 @@ namespace EcommerceStore.Tests.Tests
         public async Task GetOrderByIdAsync_ShouldThrowValidationException_WhenOrderIsDeleted(int orderId)
         {
             // Arrange 
-            _context = GetDatabaseContext();
+            var dbName = nameof(GetOrderByIdAsync_ShouldThrowValidationException_WhenOrderIsDeleted);
 
-            OrderService _sut = GetOrderService(_context);
+            OrderService _sut = GetOrderService(dbName);
 
-            await _context.Orders.AddAsync(OrderMockData.GetOrder("Completed", true));
-            await _context.SaveChangesAsync();
+            var order = OrderMockData.GetOrder(orderId, StatusesEnum.Created, true);
 
-            // Act & Assert
-            await Assert.ThrowsAsync<ValidationException>(async () => await _sut.GetOrderByIdAsync(orderId));
+            // Act
+            using (var context = new EcommerceContext(GetDbContextOptions(dbName)))
+            {
+                context.Orders.Add(order);
+                await context.SaveChangesAsync();
+            }
+
+            var message = NotFoundExceptionMessages.OrderNotFound;
+
+            // Assert
+            var exception = await Assert.ThrowsAsync<ValidationException>(async () => await _sut.GetOrderByIdAsync(orderId));
+            Assert.Equal(message, exception.Message);
         }
 
         [Theory]
@@ -133,14 +158,22 @@ namespace EcommerceStore.Tests.Tests
         public async Task GetAllOrdersForUserAsync_ShouldThrowValidationException_WhenUserDoesntHaveOrders(int userId)
         {
             // Arrange
-            _context = GetDatabaseContext();
+            var dbName = nameof(GetAllOrdersForUserAsync_ShouldThrowValidationException_WhenUserDoesntHaveOrders);
 
-            OrderService _sut = GetOrderService(_context);
+            OrderService _sut = GetOrderService(dbName);
 
-            await SeedDatabase.SeedDatabaseWithOrdersAsync(_context);
+            using (var context = new EcommerceContext(GetDbContextOptions(dbName)))
+            {
+                await SeedDatabase.SeedDatabaseWithOrdersAsync(context);
+            }
 
-            // Act & Assert
-            await Assert.ThrowsAsync<ValidationException>(async () => await _sut.GetAllOrdersForUserAsync(userId));
+            // Act 
+            var message = NotFoundExceptionMessages.OrderNotFound;
+
+            //Assert
+            var exception = await Assert.ThrowsAsync<ValidationException>(async () => await _sut.GetAllOrdersForUserAsync(userId));
+
+            Assert.Equal(message, exception.Message);
         }
 
         [Theory]
@@ -148,26 +181,32 @@ namespace EcommerceStore.Tests.Tests
         public async Task CreateOrderAsync_WhenOrderIsSuccessfullyCreated(int userId)
         {
             // Arrange
-            _context = GetDatabaseContext();
-            var orderService = new Mock<OrderService>();
+            var dbName = nameof(CreateOrderAsync_WhenOrderIsSuccessfullyCreated);
 
-            var productService = new ProductService(new ProductRepository(_context));
-
-            OrderService _sut = GetOrderService(_context);
+            OrderService _sut = GetOrderService(dbName);
 
             var orderInputModel = OrderMockData.GetOrderInputModelForCreating();
 
-            var orderStatus = "Created";
-            await SeedDatabase.SeedDatabaseWithOrdersAsync(_context);
-            await SeedDatabase.SeedDatabaseWithProductsAsync(_context);
+            var orderStatus = StatusesEnum.Created.ToString();
+
+            using (var context = new EcommerceContext(GetDbContextOptions(dbName)))
+            {
+                await SeedDatabase.SeedDatabaseWithProductsAsync(context);
+            }
 
             // Act
             await _sut.CreateOrderAsync(userId, orderInputModel);
-            var result = await _sut.GetOrderByIdAsync(3);
+
+            Order result;
+
+            using (var context = new EcommerceContext(GetDbContextOptions(dbName)))
+            {
+                result = await context.Orders.FirstOrDefaultAsync(o => o.Id == 1);
+            }
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(orderStatus, result.Status);     
+            Assert.Equal(orderStatus, result.Status);
         }
 
         [Theory]
@@ -175,19 +214,24 @@ namespace EcommerceStore.Tests.Tests
         public async Task CreateOrderAsync_ThrowValidationException_WhenProductAmountExceedProductAmountInDatabase(int userId)
         {
             // Arrange
-            _context = GetDatabaseContext();
+            var dbName = nameof(CreateOrderAsync_ThrowValidationException_WhenProductAmountExceedProductAmountInDatabase);
 
-            OrderService _sut = GetOrderService(_context);
-
-            var productService = new ProductService(new ProductRepository(_context));
+            OrderService _sut = GetOrderService(dbName);
 
             var orderInputModel = OrderMockData.GetOrderInputModelWithExceedProductAmount();
 
-            await SeedDatabase.SeedDatabaseWithOrdersAsync(_context);
-            await SeedDatabase.SeedDatabaseWithProductsAsync(_context);
+            using (var context = new EcommerceContext(GetDbContextOptions(dbName)))
+            {
+                await SeedDatabase.SeedDatabaseWithOrdersAsync(context);
+                await SeedDatabase.SeedDatabaseWithProductsAsync(context);
+            }
 
             // Act & Assert
-            await Assert.ThrowsAsync<ValidationException>(async () => await _sut.CreateOrderAsync(userId, orderInputModel));
+            var message = ExceptionMessages.OrderCreateFailed;
+
+            var exception = await Assert.ThrowsAsync<ValidationException>(async () => await _sut.CreateOrderAsync(userId, orderInputModel));
+
+            Assert.Equal(message, exception.Message);
         }
 
         [Theory]
@@ -195,15 +239,26 @@ namespace EcommerceStore.Tests.Tests
         public async Task CancelOrderAsync_ThrowValidationException_WhenOrderStatusCanceled(int orderId)
         {
             // Arrange 
-            _context = GetDatabaseContext();
+            var dbName = nameof(CancelOrderAsync_ThrowValidationException_WhenOrderStatusCanceled);
 
-            OrderService _sut = GetOrderService(_context);
+            OrderService _sut = GetOrderService(dbName);
 
-            await _context.Orders.AddAsync(OrderMockData.GetOrder("Canceled", false));
-            await _context.SaveChangesAsync();
+            Order order = OrderMockData.GetOrder(orderId, StatusesEnum.Canceled, false);
 
-            // Act & Assert
-            await Assert.ThrowsAsync<ValidationException>(async () => await _sut.CancelOrderAsync(orderId));
+            using (var context = new EcommerceContext(GetDbContextOptions(dbName)))
+            {
+                context.Orders.Add(order);
+                await context.SaveChangesAsync();
+            }
+
+            // Act
+            var message = NotFoundExceptionMessages.OrderNotFound;
+
+            // Assert
+            // check validation exception message
+            var exception = await Assert.ThrowsAsync<ValidationException>(async () => await _sut.CancelOrderAsync(orderId));
+
+            Assert.Equal(message, exception.Message);
         }
 
         [Theory]
@@ -211,18 +266,26 @@ namespace EcommerceStore.Tests.Tests
         public async Task UpdateOrderAsync_WhenStatusIsSuccessfullyUpdated(int orderId)
         {
             // Arrange
-            _context = GetDatabaseContext();
+            var dbName = nameof(UpdateOrderAsync_WhenStatusIsSuccessfullyUpdated);
 
-            OrderService _sut = GetOrderService(_context);
+            OrderService _sut = GetOrderService(dbName);
 
-            await SeedDatabase.SeedDatabaseWithOrdersAsync(_context);
+            using (var context = new EcommerceContext(GetDbContextOptions(dbName)))
+            {
+                await SeedDatabase.SeedDatabaseWithOrdersAsync(context);
+            }
 
-            var status = "InReview";
+            var status = StatusesEnum.InReview.ToString();
 
             // Act
             await _sut.UpdateOrderAsync(orderId);
 
-            var updatedOrder = await _sut.GetOrderByIdAsync(orderId);
+            Order updatedOrder;
+
+            using (var context = new EcommerceContext(GetDbContextOptions(dbName)))
+            {
+                updatedOrder = await context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
+            }
 
             // Assert
             Assert.Equal(status, updatedOrder.Status);
@@ -233,20 +296,21 @@ namespace EcommerceStore.Tests.Tests
         public async Task UpdateOrderAsync_ThrowValidationException_WhenOrderDoesntExist(int orderId)
         {
             // Arrange
-            _context = GetDatabaseContext();
+            var dbName = nameof(UpdateOrderAsync_ThrowValidationException_WhenOrderDoesntExist);
 
-            OrderService _sut = GetOrderService(_context);
+            OrderService _sut = GetOrderService(dbName);
 
-            await SeedDatabase.SeedDatabaseWithOrdersAsync(_context);
+            using (var context = new EcommerceContext(GetDbContextOptions(dbName)))
+            {
+                await SeedDatabase.SeedDatabaseWithOrdersAsync(context);
+            }
 
             // Act & Assert
-            await Assert.ThrowsAsync<ValidationException>(async () => await _sut.UpdateOrderAsync(orderId));
-        }
+            var message = NotFoundExceptionMessages.OrderNotFound;
 
-        public void Dispose()
-        {
-            _context.Database.EnsureDeleted();
-            _context.Dispose();
+            var exception = await Assert.ThrowsAsync<ValidationException>(async () => await _sut.UpdateOrderAsync(orderId));
+
+            Assert.Equal(message, exception.Message);
         }
     }
 }
