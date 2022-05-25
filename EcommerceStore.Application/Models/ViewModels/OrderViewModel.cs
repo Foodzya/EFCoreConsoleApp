@@ -9,6 +9,6 @@ namespace EcommerceStore.Application.Models.ViewModels
         public string Status { get; set; }
         public string CustomerFullName { get; set; }
         public List<ProductViewModel> Products { get; set; }
-        public double TotalPrice { get; set; }
+        public decimal TotalPrice { get; set; }
     }
 }

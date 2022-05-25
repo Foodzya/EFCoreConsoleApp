@@ -11,14 +11,14 @@ namespace EcommerceStore.Tests.MockData
 {
     public static class OrderMockData
     {
-        public static Order GetOrderWithIsDeletedTrue()
+        public static Order GetOrder(string status, bool isDeleted)
         {
             var order = new Order
             {
                 Id = 1,
                 ModifiedDate = DateTime.UtcNow,
-                Status = "InReview",
-                IsDeleted = true,
+                Status = "Canceled",
+                IsDeleted = isDeleted,
                 UserId = 1,
                 User = new User
                 {
@@ -30,23 +30,21 @@ namespace EcommerceStore.Tests.MockData
             return order;
         }
 
-        public static Order GetOrderWithCanceledStatus()
+        public static OrderInputModel GetOrderInputModelWithExceedProductAmount()
         {
-            var order = new Order
+            var orderInputModel = new OrderInputModel
             {
-                Id = 1,
-                ModifiedDate = DateTime.UtcNow,
-                Status = "Canceled",
-                IsDeleted = true,
-                UserId = 1,
-                User = new User
+                ProductsDetails = new List<ProductDetailsForOrderInputModel>
                 {
-                    Email = "somemail@gmail.com",
-                    PhoneNumber = "123123123"
+                    new ProductDetailsForOrderInputModel
+                    {
+                        ProductAmount = 1000,
+                        ProductId = 1
+                    }
                 }
             };
 
-            return order;
+            return orderInputModel;
         }
 
         public static OrderInputModel GetOrderInputModelForCreating()

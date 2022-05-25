@@ -9,9 +9,9 @@ namespace EcommerceStore.Application.Models.InputModels
         public string Name { get; set; }
         [Required]
         [Range(0.1, double.MaxValue, ErrorMessage = "Price must be positive floating-point numeric number")]
-        public double Price { get; set; }
+        public decimal Price { get; set; }
         [Required]
-        public decimal Quantity { get; set; }
+        public int Quantity { get; set; }
         [Required]
         [StringLength(500, MinimumLength = 1, ErrorMessage = "Product's description must be between 1 and 500 characters")]
         public string Description { get; set; }
