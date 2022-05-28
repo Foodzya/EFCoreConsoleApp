@@ -18,6 +18,8 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+EcommerceStore.API/Queries/
+EcommerceStore.API/Queries/Models
 
 # Visual Studio 2015 cache/options directory
 .vs/

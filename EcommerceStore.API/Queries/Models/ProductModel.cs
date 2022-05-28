@@ -3,8 +3,8 @@
     public class ProductModel
     {
         public string Name { get; set; }
-        public decimal Quantity { get; set; }
-        public double Price { get; set; }
+        public int Quantity { get; set; }
+        public decimal Price { get; set; }
         public string Description { get; set; }
         public string SectionName { get; set; }
         public string CategoryName { get; set; }
