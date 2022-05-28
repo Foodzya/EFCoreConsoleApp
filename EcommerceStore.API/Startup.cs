@@ -11,6 +11,9 @@ using System;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.IO;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
 
 namespace EcommerceStore.API
 {
@@ -30,6 +33,25 @@ namespace EcommerceStore.API
             services.AddApplicationServices();
 
             services.AddRepositories();
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(opt =>
+            {
+                var Key = Encoding.ASCII.GetBytes(Configuration["JwtConfig:Secret"]);
+                opt.SaveToken = true;
+                opt.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Key),
+                    RequireExpirationTime = false
+                };
+            });
 
             services.AddControllers()
                 .ConfigureApiBehaviorOptions(options =>
@@ -62,6 +84,8 @@ namespace EcommerceStore.API
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

@@ -1,7 +1,9 @@
 ﻿using EcommerceStore.Application.Exceptions;
 using EcommerceStore.Application.Interfaces;
+using EcommerceStore.Application.Models;
 using EcommerceStore.Application.Models.InputModels;
 using EcommerceStore.Application.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -21,6 +23,18 @@ namespace EcommerceStore.API.Controllers
         public UsersController(IUserService userService)
         {
             _userService = userService;
+        }
+
+        [AllowAnonymous]
+        [HttpPost("authentication")]
+        public async Task<ActionResult<UserViewModel>> AuthenticateAsync([FromBody] UserLoginModel userLoginModel)
+        {
+            if (!ModelState.IsValid)
+                throw new ValidationException(ExceptionMessages.IncorrectUserCredentials);
+
+            var userViewModel = await _userService.AuthenticateUserAsync(userLoginModel);
+
+            return Ok(userViewModel);
         }
 
         /// <summary>
@@ -43,6 +57,7 @@ namespace EcommerceStore.API.Controllers
         /// </summary>
         /// <returns></returns>
         /// <response code="200">Returns when list of users is successfully obtained</response>
+        [Authorize]
         [HttpGet]
         [ProducesResponseType(typeof(List<UserViewModel>), StatusCodes.Status200OK)]
         public async Task<ActionResult<List<UserViewModel>>> GetAllAsync()
@@ -58,6 +73,7 @@ namespace EcommerceStore.API.Controllers
         /// <param name="userInputModel"></param>
         /// <returns></returns>
         /// <response code="200">Returns when user is successfully created</response>
+        [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult> CreateAsync([FromBody] UserInputModel userInputModel)
         {

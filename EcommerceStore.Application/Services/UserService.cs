@@ -3,20 +3,41 @@ using System.Linq;
 using System.Threading.Tasks;
 using EcommerceStore.Application.Exceptions;
 using EcommerceStore.Application.Interfaces;
+using EcommerceStore.Application.Models;
 using EcommerceStore.Application.Models.InputModels;
 using EcommerceStore.Application.Models.ViewModels;
 using EcommerceStore.Domain.Entities;
 using EcommerceStore.Domain.Interfaces;
+using BCrypt.Net;
 
 namespace EcommerceStore.Application.Services
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly ITokenService _tokenService;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, ITokenService tokenService)
         {
             _userRepository = userRepository;
+            _tokenService = tokenService;
+        }
+
+        public async Task<TokenResponseModel> AuthenticateUserAsync(UserLoginModel userLoginModel)
+        {
+            var user = await _userRepository.GetByEmailAsync(userLoginModel.Email);
+
+            if (!BCrypt.Net.BCrypt.Verify(userLoginModel.Password, user.PasswordHash))
+                throw new ValidationException(NotFoundExceptionMessages.UserNotFound);
+
+            var token = _tokenService.GenerateJwtToken(user);
+
+            var tokenResponseModel = new TokenResponseModel
+            {
+                Token = token
+            };
+
+            return tokenResponseModel;
         }
 
         public async Task CreateUserAsync(UserInputModel userInputModel)
@@ -26,13 +47,16 @@ namespace EcommerceStore.Application.Services
             if (existingUser != null)
                 throw new ValidationException(AlreadyExistExceptionMessages.UserAlreadyExists);
 
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(userInputModel.Password);
+
             var user = new User
             {
                 FirstName = userInputModel.FirstName,
                 LastName = userInputModel.LastName,
                 Email = userInputModel.Email,
                 PhoneNumber = userInputModel.PhoneNumber,
-                RoleId = userInputModel.RoleId
+                RoleId = userInputModel.RoleId,
+                PasswordHash = passwordHash
             };
 
             await _userRepository.CreateAsync(user);

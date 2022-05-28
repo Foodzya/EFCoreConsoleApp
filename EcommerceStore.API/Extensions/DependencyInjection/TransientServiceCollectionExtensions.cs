@@ -34,6 +34,7 @@ namespace EcommerceStore.API.Extensions.DependencyInjection
             services.AddTransient<IProductCategoryService, ProductCategoryService>();
             services.AddTransient<ISectionService, SectionService>();
             services.AddTransient<IReviewService, ReviewService>();
+            services.AddTransient<ITokenService, TokenService>();
 
             return services;
         }
