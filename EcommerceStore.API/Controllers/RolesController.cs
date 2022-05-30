@@ -1,4 +1,5 @@
-﻿using EcommerceStore.API.Constants;
+﻿using EcommerceStore.API.Authentication;
+using EcommerceStore.API.Constants;
 using EcommerceStore.Application.Exceptions;
 using EcommerceStore.Application.Interfaces;
 using EcommerceStore.Application.Models.InputModels;
@@ -30,7 +31,7 @@ namespace EcommerceStore.API.Controllers
         /// </summary>
         /// <returns></returns>
         /// <response code="200">Returns when list of roles is successfully obtained</response>
-        [Authorize(Roles = Roles.admin)]
+        [Authorize(Policy = AuthPolicies.AdminAccess)]
         [HttpGet]
         [ProducesResponseType(typeof(List<RoleViewModel>), StatusCodes.Status200OK)]
         public async Task<ActionResult<List<RoleViewModel>>> GetAllAsync()
@@ -46,7 +47,7 @@ namespace EcommerceStore.API.Controllers
         /// <param name="roleId"></param>
         /// <returns></returns>
         /// <response code="200">Returns when role is successfully obtained</response>
-        [Authorize(Roles = Roles.admin)]
+        [Authorize(Policy = AuthPolicies.AdminAccess)]
         [HttpGet("{roleId}")]
         [ProducesResponseType(typeof(RoleViewModel), StatusCodes.Status200OK)]
         public async Task<ActionResult<RoleViewModel>> GetByIdAsync([FromRoute] int roleId)
@@ -62,7 +63,7 @@ namespace EcommerceStore.API.Controllers
         /// <param name="roleId"></param>
         /// <returns></returns>
         /// <response code="200">Returns when role is successfully deleted</response>
-        [Authorize(Roles = Roles.admin)]
+        [Authorize(Policy = AuthPolicies.AdminAccess)]
         [HttpDelete("{roleId}")]
         [ProducesResponseType(typeof(RoleViewModel), StatusCodes.Status200OK)]
         public async Task<ActionResult> RemoveByIdAsync([FromRoute] int roleId)
@@ -87,7 +88,7 @@ namespace EcommerceStore.API.Controllers
         /// </remarks>
         /// <response code="200">Returns when role is successfully created</response>
         /// <response code="400">Returns when role input details are incorrect</response>
-        [Authorize(Roles = Roles.admin)]
+        [Authorize(Policy = AuthPolicies.AdminAccess)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -117,7 +118,7 @@ namespace EcommerceStore.API.Controllers
         /// </remarks>
         /// <response code="200">Returns when role is successfully updated</response>
         /// <response code="400">Returns when role input details are incorrect</response>
-        [Authorize(Roles = Roles.admin)]
+        [Authorize(Policy = AuthPolicies.AdminAccess)]
         [HttpPut("{roleId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

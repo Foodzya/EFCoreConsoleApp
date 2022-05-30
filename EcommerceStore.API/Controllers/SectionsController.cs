@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using EcommerceStore.API.Authentication;
 using EcommerceStore.API.Constants;
 using EcommerceStore.Application.Exceptions;
 using EcommerceStore.Application.Interfaces;
@@ -30,7 +31,7 @@ namespace EcommerceStore.API.Controllers
         /// </summary>
         /// <returns></returns>
         /// <response code="200">Returns when list of sections is successfully obtained</response>
-        [Authorize(Roles = $"{Roles.admin},{Roles.customer}")]
+        [Authorize(Policy = AuthPolicies.CustomerAccess)]
         [HttpGet]
         [ProducesResponseType(typeof(List<SectionViewModel>), StatusCodes.Status200OK)]
         public async Task<ActionResult<List<SectionViewModel>>> GetAllAsync()
@@ -46,7 +47,7 @@ namespace EcommerceStore.API.Controllers
         /// <param name="sectionId"></param>
         /// <returns></returns>
         /// <response code="200">Returns when list of sections is successfully obtained</response>
-        [Authorize(Roles = $"{Roles.admin},{Roles.customer}")]
+        [Authorize(Policy = AuthPolicies.CustomerAccess)]
         [HttpGet("{sectionId}")]
         [ProducesResponseType(typeof(SectionViewModel), StatusCodes.Status200OK)]
         public async Task<ActionResult<SectionViewModel>> GetByIdAsync([FromRoute] int sectionId)
@@ -71,7 +72,7 @@ namespace EcommerceStore.API.Controllers
         /// </remarks>
         /// <response code="200">Returns when section is successfully created</response>
         /// <response code="400">Returns when section input details are incorrect</response>
-        [Authorize(Roles = Roles.admin)]
+        [Authorize(Policy = AuthPolicies.AdminAccess)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -101,7 +102,7 @@ namespace EcommerceStore.API.Controllers
         /// </remarks>
         /// <response code="200">Returns when section is successfully renamed</response>
         /// <response code="400">Returns when section input name is incorrect</response>
-        [Authorize(Roles = Roles.admin)]
+        [Authorize(Policy = AuthPolicies.AdminAccess)]
         [HttpPut("{sectionId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -121,7 +122,7 @@ namespace EcommerceStore.API.Controllers
         /// <param name="sectionId"></param>
         /// <returns></returns>
         /// <response code="200">Returns when section is successfully deleted</response>
-        [Authorize(Roles = Roles.admin)]
+        [Authorize(Policy = AuthPolicies.AdminAccess)]
         [HttpDelete("{sectionId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> RemoveAsync([FromRoute] int sectionId)

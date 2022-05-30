@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using EcommerceStore.API.Constants;
+using EcommerceStore.API.Authentication;
 
 namespace EcommerceStore.API.Controllers
 {
@@ -26,25 +27,13 @@ namespace EcommerceStore.API.Controllers
             _userService = userService;
         }
 
-        [AllowAnonymous]
-        [HttpPost("authentication")]
-        public async Task<ActionResult<UserViewModel>> AuthenticateAsync([FromBody] UserLoginModel userLoginModel)
-        {
-            if (!ModelState.IsValid)
-                throw new ValidationException(ExceptionMessages.IncorrectUserCredentials);
-
-            var userViewModel = await _userService.AuthenticateUserAsync(userLoginModel);
-
-            return Ok(userViewModel);
-        }
-
         /// <summary>
         /// Get a single user
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
         /// <response code="200">Returns when user is successfully obtained</response>
-        [Authorize(Roles = $"{Roles.admin},{Roles.customer}")]
+        [Authorize(Policy = AuthPolicies.AdminAccess)]
         [HttpGet("{userId}")]
         [ProducesResponseType(typeof(UserViewModel), StatusCodes.Status200OK)]
         public async Task<ActionResult<UserViewModel>> GetByIdAsync([FromRoute] int userId)
@@ -59,7 +48,7 @@ namespace EcommerceStore.API.Controllers
         /// </summary>
         /// <returns></returns>
         /// <response code="200">Returns when list of users is successfully obtained</response>
-        [Authorize(Roles = Roles.admin)]
+        [Authorize(Policy = AuthPolicies.AdminAccess)]
         [HttpGet]
         [ProducesResponseType(typeof(List<UserViewModel>), StatusCodes.Status200OK)]
         public async Task<ActionResult<List<UserViewModel>>> GetAllAsync()
@@ -94,7 +83,7 @@ namespace EcommerceStore.API.Controllers
         /// <returns></returns>
         /// <response code="200">Returns when user is successfully deleted</response>
         /// <response code="400">Returns when failed during user deleting</response>
-        [Authorize(Roles = Roles.admin)]
+        [Authorize(Policy = AuthPolicies.AdminAccess)]
         [HttpDelete("{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -113,7 +102,7 @@ namespace EcommerceStore.API.Controllers
         /// <returns></returns>
         /// <response code="200">Returns when user is successfully updated</response>
         /// <response code="400">Returns when failed during user updating</response>
-        [Authorize(Roles = $"{Roles.admin},{Roles.customer}")]
+        [Authorize(Policy = AuthPolicies.CustomerAccess)]
         [HttpPut("{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

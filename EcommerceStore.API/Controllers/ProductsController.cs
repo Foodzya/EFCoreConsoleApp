@@ -1,4 +1,5 @@
-﻿using EcommerceStore.API.Constants;
+﻿using EcommerceStore.API.Authentication;
+using EcommerceStore.API.Constants;
 using EcommerceStore.Application.Exceptions;
 using EcommerceStore.Application.Interfaces;
 using EcommerceStore.Application.Models.InputModels;
@@ -30,7 +31,7 @@ namespace EcommerceStore.API.Controllers
         /// </summary>
         /// <returns></returns>
         /// <response code="200">Returns when list of products is successfully obtained</response>
-        [Authorize(Roles = $"{Roles.admin},{Roles.customer}")]
+        [Authorize(Policy = AuthPolicies.CustomerAccess)]
         [HttpGet]
         [ProducesResponseType(typeof(List<ProductViewModel>), StatusCodes.Status200OK)]
         public async Task<ActionResult<List<ProductViewModel>>> GetAllAsync()
@@ -46,7 +47,7 @@ namespace EcommerceStore.API.Controllers
         /// <param name="productId"></param>
         /// <returns></returns>
         /// <response code="200">Returns when product is successfully obtained</response>
-        [Authorize(Roles = $"{Roles.admin},{Roles.customer}")]
+        [Authorize(Policy = AuthPolicies.CustomerAccess)]
         [HttpGet("{productId}")]
         public async Task<ActionResult<ProductViewModel>> GetByIdAsync([FromRoute] int productId)
         {
@@ -77,7 +78,7 @@ namespace EcommerceStore.API.Controllers
         /// </remarks>
         /// <response code="200">Returns when product is successfully updated</response>
         /// <response code="400">Returns when product input details are incorrect</response>
-        [Authorize(Roles = Roles.admin)]
+        [Authorize(Policy = AuthPolicies.AdminAccess)]
         [HttpPut("{productId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -112,7 +113,7 @@ namespace EcommerceStore.API.Controllers
         /// </remarks>
         /// <response code="200">Returns when product is successfully created</response>
         /// <response code="400">Returns when product input details are incorrect</response>
-        [Authorize(Roles = Roles.admin)]
+        [Authorize(Policy = AuthPolicies.AdminAccess)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -132,7 +133,7 @@ namespace EcommerceStore.API.Controllers
         /// <param name="productId"></param>
         /// <returns></returns>
         /// <response code="200">Returns when product is successfully deleted</response>
-        [Authorize(Roles = Roles.admin)]
+        [Authorize(Policy = AuthPolicies.AdminAccess)]
         [HttpDelete("{productId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> DeleteByIdAsync([FromRoute] int productId)
