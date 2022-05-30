@@ -31,14 +31,14 @@ namespace EcommerceStore.API.Controllers
 
             var userResponseModel = await _accountService.AuthenticateUserAccountAsync(userLoginModel);
 
-            var token = _jwtGenerator.GenerateJwtToken(userResponseModel);
+            var accessToken = _jwtGenerator.GenerateJwtToken(userResponseModel);
 
             var tokenResponseModel = new TokenResponseViewModel
             {
                 UserEmail = userResponseModel.Email,
                 Role = userResponseModel.Role,
                 UserId = userResponseModel.Id,
-                Token = token
+                AccessToken = accessToken
             };
 
             return Ok(tokenResponseModel);
