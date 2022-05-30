@@ -1,4 +1,5 @@
-﻿using EcommerceStore.API.Constants;
+﻿using EcommerceStore.API.Authentication;
+using EcommerceStore.API.Constants;
 using EcommerceStore.Application.Exceptions;
 using EcommerceStore.Application.Interfaces;
 using EcommerceStore.Application.Models.InputModels;
@@ -31,7 +32,7 @@ namespace EcommerceStore.API.Controllers
         /// <param name="brandId"></param>
         /// <returns></returns>
         /// <response code="200">Returns when brand is successfully obtained</response>
-        [Authorize(Roles = $"{Roles.admin},{Roles.customer}")]
+        [Authorize(Policy = AuthPolicies.CustomerAccess)]
         [HttpGet("{brandId}")]
         [ProducesResponseType(typeof(BrandViewModel), StatusCodes.Status200OK)]
         public async Task<ActionResult<BrandViewModel>> GetByIdAsync([FromRoute] int brandId)
@@ -46,7 +47,7 @@ namespace EcommerceStore.API.Controllers
         /// </summary>
         /// <returns></returns>
         /// <response code="200">Returns when list of brands is successfully obtained</response>
-        [Authorize(Roles = $"{Roles.admin},{Roles.customer}")]
+        [Authorize(Policy = AuthPolicies.CustomerAccess)]
         [HttpGet]
         [ProducesResponseType(typeof(List<BrandViewModel>), StatusCodes.Status200OK)]
         public async Task<ActionResult<List<BrandViewModel>>> GetAllAsync()
@@ -62,7 +63,7 @@ namespace EcommerceStore.API.Controllers
         /// <param name="brandId"></param>
         /// <returns></returns>
         /// <response code="200">Returns when brand is successfully deleted</response>
-        [Authorize(Roles = Roles.admin)]
+        [Authorize(Policy = AuthPolicies.AdminAccess)]
         [HttpDelete("{brandId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> DeleteByIdAsync([FromRoute] int brandId)
@@ -87,7 +88,7 @@ namespace EcommerceStore.API.Controllers
         /// </remarks>
         /// <response code="200">Returns when brand is successfully created</response>
         /// <response code="400">Returns when input brand details are incorrect</response>
-        [Authorize(Roles = Roles.admin)]
+        [Authorize(Policy = AuthPolicies.AdminAccess)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -118,7 +119,7 @@ namespace EcommerceStore.API.Controllers
         /// </remarks>
         /// <response code="200">Returns when brand is successfully updated</response>
         /// <response code="400">Returns when input brand details are incorrect</response>
-        [Authorize(Roles = Roles.admin)]
+        [Authorize(Policy = AuthPolicies.AdminAccess)]
         [HttpPut("{brandId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

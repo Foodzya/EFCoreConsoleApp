@@ -15,29 +15,10 @@ namespace EcommerceStore.Application.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-        private readonly ITokenService _tokenService;
 
-        public UserService(IUserRepository userRepository, ITokenService tokenService)
+        public UserService(IUserRepository userRepository)
         {
             _userRepository = userRepository;
-            _tokenService = tokenService;
-        }
-
-        public async Task<TokenResponseModel> AuthenticateUserAsync(UserLoginModel userLoginModel)
-        {
-            var user = await _userRepository.GetByEmailAsync(userLoginModel.Email);
-
-            if (!BCrypt.Net.BCrypt.Verify(userLoginModel.Password, user.PasswordHash))
-                throw new ValidationException(NotFoundExceptionMessages.UserNotFound);
-
-            var token = _tokenService.GenerateJwtToken(user);
-
-            var tokenResponseModel = new TokenResponseModel
-            {
-                Token = token
-            };
-
-            return tokenResponseModel;
         }
 
         public async Task CreateUserAsync(UserInputModel userInputModel)

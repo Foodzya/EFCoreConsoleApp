@@ -14,7 +14,8 @@ using System.IO;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Identity;
+using EcommerceStore.API.Authentication;
+using EcommerceStore.API.Constants;
 
 namespace EcommerceStore.API
 {
@@ -51,9 +52,21 @@ namespace EcommerceStore.API
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Key),
-                    RequireExpirationTime = false
+                    RequireExpirationTime = true,
+                    ValidIssuer = Configuration["JwtConfig:Issuer"],
+                    ValidAudience = Configuration["JwtConfig:Issuer"]
                 };
             });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminAccess", policy =>
+                    policy.RequireRole(Roles.Admin));
+                options.AddPolicy("CustomerAccess", policy =>
+                    policy.RequireRole(Roles.Customer, Roles.Admin));
+            });
+
+            services.AddOptions<JwtConfig>().Bind(Configuration.GetSection("JwtConfig"));
 
             services.AddControllers()
                 .ConfigureApiBehaviorOptions(options =>
