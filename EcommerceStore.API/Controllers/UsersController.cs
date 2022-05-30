@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using EcommerceStore.API.Constants;
 
 namespace EcommerceStore.API.Controllers
 {
@@ -43,6 +44,7 @@ namespace EcommerceStore.API.Controllers
         /// <param name="userId"></param>
         /// <returns></returns>
         /// <response code="200">Returns when user is successfully obtained</response>
+        [Authorize(Roles = $"{Roles.admin},{Roles.customer}")]
         [HttpGet("{userId}")]
         [ProducesResponseType(typeof(UserViewModel), StatusCodes.Status200OK)]
         public async Task<ActionResult<UserViewModel>> GetByIdAsync([FromRoute] int userId)
@@ -57,7 +59,7 @@ namespace EcommerceStore.API.Controllers
         /// </summary>
         /// <returns></returns>
         /// <response code="200">Returns when list of users is successfully obtained</response>
-        [Authorize]
+        [Authorize(Roles = Roles.admin)]
         [HttpGet]
         [ProducesResponseType(typeof(List<UserViewModel>), StatusCodes.Status200OK)]
         public async Task<ActionResult<List<UserViewModel>>> GetAllAsync()
@@ -92,6 +94,7 @@ namespace EcommerceStore.API.Controllers
         /// <returns></returns>
         /// <response code="200">Returns when user is successfully deleted</response>
         /// <response code="400">Returns when failed during user deleting</response>
+        [Authorize(Roles = Roles.admin)]
         [HttpDelete("{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -110,6 +113,7 @@ namespace EcommerceStore.API.Controllers
         /// <returns></returns>
         /// <response code="200">Returns when user is successfully updated</response>
         /// <response code="400">Returns when failed during user updating</response>
+        [Authorize(Roles = $"{Roles.admin},{Roles.customer}")]
         [HttpPut("{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
