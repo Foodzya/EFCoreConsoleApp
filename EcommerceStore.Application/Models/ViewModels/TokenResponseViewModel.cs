@@ -1,6 +1,6 @@
 ﻿namespace EcommerceStore.Application.Models.ViewModels
 {
-    public class TokenResponseModel
+    public class TokenResponseViewModel
     {
         public string UserEmail { get; set; }
         public int UserId { get; set; }

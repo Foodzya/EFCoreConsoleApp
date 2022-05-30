@@ -1,4 +1,6 @@
-﻿using EcommerceStore.Application.Models.ViewModels;
+﻿using EcommerceStore.API.Authentication.Interfaces;
+using EcommerceStore.Application.Models;
+using EcommerceStore.Application.Models.ViewModels;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -8,7 +10,7 @@ using System.Text;
 
 namespace EcommerceStore.API.Authentication
 {
-    public class JwtGenerator 
+    public class JwtGenerator : IJwtGenerator
     {
         private readonly IOptions<JwtConfig> _jwtConfigOptions;
 
@@ -17,7 +19,7 @@ namespace EcommerceStore.API.Authentication
             _jwtConfigOptions = jwtConfigOptions;
         }
 
-        public string GenerateJwtToken(TokenResponseModel tokenResponseModel)
+        public string GenerateJwtToken(UserResponseModel userResponseModel)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -27,9 +29,9 @@ namespace EcommerceStore.API.Authentication
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(JwtRegisteredClaimNames.Sub, tokenResponseModel.UserId.ToString()),
-                    new Claim(ClaimsIdentity.DefaultRoleClaimType, tokenResponseModel.Role),
-                    new Claim(JwtRegisteredClaimNames.Email, tokenResponseModel.UserEmail)
+                    new Claim(JwtRegisteredClaimNames.Sub, userResponseModel.Id.ToString()),
+                    new Claim(ClaimsIdentity.DefaultRoleClaimType, userResponseModel.Role),
+                    new Claim(JwtRegisteredClaimNames.Email, userResponseModel.Email)
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),

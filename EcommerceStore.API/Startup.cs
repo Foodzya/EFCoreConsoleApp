@@ -16,6 +16,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using EcommerceStore.API.Authentication;
 using EcommerceStore.API.Constants;
+using EcommerceStore.API.Authentication.Interfaces;
 
 namespace EcommerceStore.API
 {
@@ -35,6 +36,8 @@ namespace EcommerceStore.API
             services.AddApplicationServices();
 
             services.AddRepositories();
+
+            services.AddTransient<IJwtGenerator, JwtGenerator>();
 
             services.AddAuthentication(options =>
             {

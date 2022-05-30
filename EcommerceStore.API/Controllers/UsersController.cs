@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using EcommerceStore.API.Constants;
 using EcommerceStore.API.Authentication;
 
 namespace EcommerceStore.API.Controllers

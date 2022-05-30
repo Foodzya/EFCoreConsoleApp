@@ -20,21 +20,21 @@ namespace EcommerceStore.Application.Services
             _userRepository = userRepository;
         }
 
-        public async Task<TokenResponseModel> AuthenticateUserAccountAsync(UserLoginModel userLoginModel)
+        public async Task<UserResponseModel> AuthenticateUserAccountAsync(UserLoginModel userLoginModel)
         {
             var user = await _userRepository.GetByEmailAsync(userLoginModel.Email);
 
             if (!BCrypt.Net.BCrypt.Verify(userLoginModel.Password, user.PasswordHash))
                 throw new ValidationException(ExceptionMessages.IncorrectUserCredentials);
 
-            var tokenResponseModel = new TokenResponseModel
+            var userResponseModel = new UserResponseModel
             {
-                UserEmail = user.Email,
-                UserId = user.Id,
+                Email = user.Email,
+                Id = user.Id,
                 Role = user.Role.Name
             };
 
-            return tokenResponseModel;
+            return userResponseModel;
         }
     }
 }
