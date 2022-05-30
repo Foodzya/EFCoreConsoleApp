@@ -33,7 +33,7 @@ namespace EcommerceStore.API.Controllers
         /// <param name="userId"></param>
         /// <returns></returns>
         /// <response code="200">Returns when user is successfully obtained</response>
-        [Authorize(Policy = AuthPolicies.AdminAccess)]
+        [Authorize(Policy = AuthPolicies.CustomerAccess)]
         [HttpGet("{userId}")]
         [ProducesResponseType(typeof(UserViewModel), StatusCodes.Status200OK)]
         public async Task<ActionResult<UserViewModel>> GetByIdAsync([FromRoute] int userId)

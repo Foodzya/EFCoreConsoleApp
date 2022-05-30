@@ -32,7 +32,9 @@ namespace EcommerceStore.API.Authentication
                     new Claim(JwtRegisteredClaimNames.Email, tokenResponseModel.UserEmail)
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                Audience = _jwtConfigOptions.Value.Audience,
+                Issuer = _jwtConfigOptions.Value.Issuer
             };
 
             var token = tokenHandler.CreateEncodedJwt(tokenDescriptor);
