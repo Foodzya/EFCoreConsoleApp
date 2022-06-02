@@ -15,6 +15,8 @@ namespace EcommerceStore.Application.Models.InputModels
         [StringLength(300, MinimumLength = 1, ErrorMessage = "Email must be between 1 and 300 characters")]
         public string Email { get; set; }
         [Required]
+        public string Password { get; set; }
+        [Required]
         [RegularExpression(@"^([0-9]{11})$", ErrorMessage = "Phone number must consist of 11 digits")]
         public string PhoneNumber { get; set; }
         [Required]

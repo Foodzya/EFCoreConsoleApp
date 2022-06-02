@@ -1,9 +1,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using EcommerceStore.API.Authentication;
+using EcommerceStore.API.Constants;
 using EcommerceStore.Application.Exceptions;
 using EcommerceStore.Application.Interfaces;
 using EcommerceStore.Application.Models.InputModels;
 using EcommerceStore.Application.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,6 +34,7 @@ namespace EcommerceStore.API.Controllers
         /// <param name="sectionId"></param>
         /// <returns></returns>
         /// <response code="200">Returns when list of product categories is successfully obtained</response>
+        [Authorize(Policy = AuthPolicies.CustomerAccess)]
         [HttpGet("/section/{sectionId}")]
         [ProducesResponseType(typeof(List<ProductCategoryViewModel>), StatusCodes.Status200OK)]
         public async Task<ActionResult<List<ProductCategoryViewModel>>> GetAllAsync([FromBody] int sectionId)
@@ -46,6 +50,7 @@ namespace EcommerceStore.API.Controllers
         /// <param name="productCategoryId"></param>
         /// <returns></returns>
         /// <response code="200">Returns when product category is successfully obtained</response>
+        [Authorize(Policy = AuthPolicies.CustomerAccess)]
         [HttpGet("{productCategoryId}")]
         [ProducesResponseType(typeof(ProductCategoryViewModel), StatusCodes.Status200OK)]
         public async Task<ActionResult<ProductCategoryViewModel>> GetByIdAsync([FromRoute] int productCategoryId)
@@ -73,6 +78,7 @@ namespace EcommerceStore.API.Controllers
         /// </remarks>
         /// <response code="200">Returns when product category is successfully updated</response>
         /// <response code="400">Returns when product category input details are incorrect</response>
+        [Authorize(Policy = AuthPolicies.AdminAccess)]
         [HttpPut("{productCategoryId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -103,6 +109,7 @@ namespace EcommerceStore.API.Controllers
         /// </remarks>
         /// <response code="200">Returns when order is successfully created</response>
         /// <response code="400">Returns when order input details are incorrect</response>
+        [Authorize(Policy = AuthPolicies.AdminAccess)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -122,6 +129,7 @@ namespace EcommerceStore.API.Controllers
         /// <param name="productCategoryId"></param>
         /// <returns></returns>
         /// <response code="200">Returns when order is successfully deleted</response>
+        [Authorize(Policy = AuthPolicies.AdminAccess)]
         [HttpDelete("{productCategoryId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> DeleteByIdAsync([FromRoute] int productCategoryId)
@@ -138,6 +146,7 @@ namespace EcommerceStore.API.Controllers
         /// <param name="sectionId"></param>
         /// <returns></returns>
         /// <response code="200">Returns when product category is successfully attached to section</response>
+        [Authorize(Policy = AuthPolicies.AdminAccess)]
         [HttpPut("{productCategoryId}/sections/{sectionId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> LinkCategoryToSectionAsync([FromRoute] int productCategoryId, [FromRoute] int sectionId)

@@ -3,10 +3,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using EcommerceStore.Application.Exceptions;
 using EcommerceStore.Application.Interfaces;
+using EcommerceStore.Application.Models;
 using EcommerceStore.Application.Models.InputModels;
 using EcommerceStore.Application.Models.ViewModels;
 using EcommerceStore.Domain.Entities;
 using EcommerceStore.Domain.Interfaces;
+using BCrypt.Net;
 
 namespace EcommerceStore.Application.Services
 {
@@ -26,13 +28,16 @@ namespace EcommerceStore.Application.Services
             if (existingUser != null)
                 throw new ValidationException(AlreadyExistExceptionMessages.UserAlreadyExists);
 
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(userInputModel.Password);
+
             var user = new User
             {
                 FirstName = userInputModel.FirstName,
                 LastName = userInputModel.LastName,
                 Email = userInputModel.Email,
                 PhoneNumber = userInputModel.PhoneNumber,
-                RoleId = userInputModel.RoleId
+                RoleId = userInputModel.RoleId,
+                PasswordHash = passwordHash
             };
 
             await _userRepository.CreateAsync(user);

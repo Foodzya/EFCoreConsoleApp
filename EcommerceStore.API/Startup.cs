@@ -11,6 +11,12 @@ using System;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.IO;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using EcommerceStore.API.Authentication;
+using EcommerceStore.API.Constants;
+using EcommerceStore.API.Authentication.Interfaces;
 
 namespace EcommerceStore.API
 {
@@ -30,6 +36,40 @@ namespace EcommerceStore.API
             services.AddApplicationServices();
 
             services.AddRepositories();
+
+            services.AddTransient<IJwtGenerator, JwtGenerator>();
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(opt =>
+            {
+                var Key = Encoding.ASCII.GetBytes(Configuration["JwtConfig:Secret"]);
+                opt.SaveToken = true;
+                opt.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Key),
+                    RequireExpirationTime = true,
+                    ValidIssuer = Configuration["JwtConfig:Issuer"],
+                    ValidAudience = Configuration["JwtConfig:Issuer"]
+                };
+            });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminAccess", policy =>
+                    policy.RequireRole(Roles.Admin));
+                options.AddPolicy("CustomerAccess", policy =>
+                    policy.RequireRole(Roles.Customer, Roles.Admin));
+            });
+
+            services.AddOptions<JwtConfig>().Bind(Configuration.GetSection("JwtConfig"));
 
             services.AddControllers()
                 .ConfigureApiBehaviorOptions(options =>
@@ -62,6 +102,8 @@ namespace EcommerceStore.API
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

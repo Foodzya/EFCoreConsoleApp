@@ -1,7 +1,10 @@
-﻿using EcommerceStore.Application.Exceptions;
+﻿using EcommerceStore.API.Authentication;
+using EcommerceStore.API.Constants;
+using EcommerceStore.Application.Exceptions;
 using EcommerceStore.Application.Interfaces;
 using EcommerceStore.Application.Models.InputModels;
 using EcommerceStore.Application.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -29,6 +32,7 @@ namespace EcommerceStore.API.Controllers
         /// <param name="orderId"></param>
         /// <returns></returns>
         /// <response code="200">Returns when order is successfully obtained</response>
+        [Authorize(Policy = AuthPolicies.CustomerAccess)]
         [HttpGet("{orderId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<OrderViewModel>> GetByIdAsync([FromRoute] int orderId)
@@ -44,6 +48,7 @@ namespace EcommerceStore.API.Controllers
         /// <param name="userId"></param>
         /// <returns></returns>
         /// <response code="200">Returns when list of orders is successfully obtained</response>
+        [Authorize(Policy = AuthPolicies.CustomerAccess)]
         [HttpGet("/users/{userId}")]
         [ProducesResponseType(typeof(List<OrderViewModel>), StatusCodes.Status200OK)]
         public async Task<ActionResult<List<OrderViewModel>>> GetAllAsync([FromRoute] int userId)
@@ -78,6 +83,7 @@ namespace EcommerceStore.API.Controllers
         /// </remarks>
         /// <response code="200">Returns when order is successfully created</response>
         /// <response code="400">Returns when order input details are incorrect</response>
+        [Authorize(Policy = AuthPolicies.CustomerAccess)]
         [HttpPost("/users/{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -98,6 +104,7 @@ namespace EcommerceStore.API.Controllers
         /// <returns></returns>
         /// <response code="200">Returns when order is successfully updated</response>
         /// <response code="400">Returns when order input details are incorrect</response>        
+        [Authorize(Policy = AuthPolicies.CustomerAccess)]
         [HttpPut("{orderId}")]
         [ProducesResponseType(typeof(OrderViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -117,6 +124,7 @@ namespace EcommerceStore.API.Controllers
         /// <param name="orderId"></param>
         /// <returns></returns>
         /// <response code="200">Returns when order is successfully canceled</response>
+        [Authorize(Policy = AuthPolicies.CustomerAccess)]
         [HttpDelete("{orderId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> CancelAsync([FromRoute] int orderId)
@@ -135,6 +143,7 @@ namespace EcommerceStore.API.Controllers
         /// <exception cref="ValidationException"></exception>
         /// <response code="200">Returns when product is successfully added to order</response>
         /// <response code="400">Returns when failed during adding product to order</response>
+        [Authorize(Policy = AuthPolicies.CustomerAccess)]
         [HttpPost("{orderId}/products")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -154,6 +163,7 @@ namespace EcommerceStore.API.Controllers
         /// <param name="orderId"></param>
         /// <param name="productId"></param>
         /// <returns></returns>
+        [Authorize(Policy = AuthPolicies.CustomerAccess)]
         [HttpDelete("{orderId}/products/{productId}")]
         public async Task<ActionResult> RemoveProductAsync([FromRoute] int orderId, [FromBody] int productId)
         {

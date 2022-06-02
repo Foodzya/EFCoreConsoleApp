@@ -1,7 +1,10 @@
-﻿using EcommerceStore.Application.Exceptions;
+﻿using EcommerceStore.API.Authentication;
+using EcommerceStore.API.Constants;
+using EcommerceStore.Application.Exceptions;
 using EcommerceStore.Application.Interfaces;
 using EcommerceStore.Application.Models.InputModels;
 using EcommerceStore.Application.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -28,6 +31,7 @@ namespace EcommerceStore.API.Controllers
         /// </summary>
         /// <returns></returns>
         /// <response code="200">Returns when list of reviews is successfully obtained</response>
+        [Authorize(Policy = AuthPolicies.AdminAccess)]
         [HttpGet]
         [ProducesResponseType(typeof(List<ReviewViewModel>), StatusCodes.Status200OK)]
         public async Task<ActionResult<List<ReviewViewModel>>> GetAllAsync()
@@ -43,6 +47,7 @@ namespace EcommerceStore.API.Controllers
         /// <param name="reviewId"></param>
         /// <returns></returns>
         /// <response code="200">Returns when review is successfully obtained</response>
+        [Authorize(Policy = AuthPolicies.CustomerAccess)]
         [HttpGet("{reviewId}")]
         [ProducesResponseType(typeof(ReviewViewModel), StatusCodes.Status200OK)]
         public async Task<ActionResult<ReviewViewModel>> GetByIdAsync([FromRoute] int reviewId)
@@ -70,6 +75,7 @@ namespace EcommerceStore.API.Controllers
         /// </remarks>
         /// <response code="200">Returns when review is successfully created</response>
         /// <response code="400">Returns when review input details are incorrect</response>
+        [Authorize(Policy = AuthPolicies.CustomerAccess)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -102,6 +108,7 @@ namespace EcommerceStore.API.Controllers
         /// </remarks>
         /// <response code="200">Returns when review is successfully updated</response>
         /// <response code="400">Returns when review input details are incorrect</response>
+        [Authorize(Policy = AuthPolicies.CustomerAccess)]
         [HttpPut("{reviewId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -121,6 +128,7 @@ namespace EcommerceStore.API.Controllers
         /// <param name="reviewId"></param>
         /// <returns></returns>
         /// <response code="200">Returns when review is successfully deleted</response>
+        [Authorize(Policy = AuthPolicies.CustomerAccess)]
         [HttpDelete("{reviewId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> RemoveAsync([FromRoute] int reviewId)

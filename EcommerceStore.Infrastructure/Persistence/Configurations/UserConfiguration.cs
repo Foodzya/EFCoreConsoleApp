@@ -11,6 +11,7 @@ namespace EcommerceStore.Infrastructure.Persistence.Configurations
             builder.HasKey(u => u.Id);
             builder.Property(u => u.Email).IsRequired();
             builder.Property(u => u.PhoneNumber).IsRequired();
+            builder.Property(u => u.PasswordHash).IsRequired();
             builder.HasIndex(u => u.Email).IsUnique();
             builder.HasIndex(u => u.RoleId).IsUnique(false);
             builder
