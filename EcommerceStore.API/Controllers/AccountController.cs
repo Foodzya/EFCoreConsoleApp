@@ -24,7 +24,7 @@ namespace EcommerceStore.API.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public async Task<ActionResult<UserViewModel>> SignInAsync([FromBody] UserLoginModel userLoginModel)
+        public async Task<ActionResult<TokenResponseViewModel>> SignInAsync([FromBody] UserLoginModel userLoginModel)
         {
             if (!ModelState.IsValid)
                 throw new ValidationException(ExceptionMessages.IncorrectUserCredentials);
